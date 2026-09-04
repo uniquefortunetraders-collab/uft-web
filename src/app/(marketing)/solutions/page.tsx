@@ -143,8 +143,9 @@ export default async function SolutionsPage() {
                       </Button>
                     </Link>
                   </div>
-                </Card>
-              </Reveal>
+                </div>
+              </Card>
+            </Reveal>
             );
           })}
         </div>

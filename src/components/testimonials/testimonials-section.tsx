@@ -17,6 +17,8 @@ const AVATAR_COLORS = [
 
 interface TestimonialsSectionProps {
   testimonials?: Testimonial[];
+  title?: string;
+  subtitle?: string;
 }
 
 const DEFAULT_TESTIMONIALS = [
@@ -52,7 +54,7 @@ const DEFAULT_TESTIMONIALS = [
   },
 ];
 
-export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
+export function TestimonialsSection({ testimonials, title, subtitle }: TestimonialsSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -92,9 +94,18 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               CLIENTS LOVE US
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-              Hear From Our <br className="hidden sm:inline" />
-              Happy Clients.
+              {title ? title : (
+                <>
+                  Hear From Our <br className="hidden sm:inline" />
+                  Happy Clients.
+                </>
+              )}
             </h2>
+            {subtitle && (
+              <p className="text-xs sm:text-sm text-slate-600 mt-2 max-w-2xl">
+                {subtitle}
+              </p>
+            )}
           </Reveal>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">

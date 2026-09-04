@@ -122,7 +122,7 @@ const TECHS_MARQUEE = [...TECHS, ...TECHS];
 
 export function TechStrip() {
   return (
-    <section className="relative py-5 px-4 sm:px-6 lg:px-8 bg-[#f1f8f3]">
+    <section className="relative py-4 px-4 sm:px-6 lg:px-8 bg-white">
 
       {/* Mobile-only label — sits ABOVE the card, outside border */}
       <p className="sm:hidden text-[10px] font-bold tracking-[0.18em] uppercase text-gray-400 text-center mb-2">
@@ -130,14 +130,14 @@ export function TechStrip() {
       </p>
 
       {/* Bordered card — max-width with left/right margin */}
-      <div className="max-w-6xl mx-auto rounded-2xl border border-pink-200 bg-white shadow-sm shadow-pink-500/5 overflow-hidden">
+      <div className="max-w-6xl mx-auto rounded-2xl border border-gray-200/90 bg-slate-50/50 shadow-xs overflow-hidden">
 
-        {/* Desktop: side-by-side — label left, marquee right. Mobile: marquee only */}
+        {/* Desktop: side-by-side — label left, marquee right */}
         <div className="flex items-stretch">
 
           {/* Label — hidden on mobile, visible on desktop as left column */}
-          <div className="hidden sm:flex flex-shrink-0 px-5 h-14 items-center border-r border-pink-100 bg-pink-50/30">
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 whitespace-nowrap">
+          <div className="hidden sm:flex flex-shrink-0 px-6 h-14 items-center border-r border-gray-200/70 bg-gray-50/60">
+            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-500 whitespace-nowrap">
               Technologies We Work With
             </span>
           </div>

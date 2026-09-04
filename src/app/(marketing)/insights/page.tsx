@@ -19,34 +19,7 @@ export default async function InsightsPage() {
     .eq('status', 'published')
     .order('published_at', { ascending: false });
 
-  const defaultPosts = [
-    {
-      id: '1',
-      title: 'How AI is Transforming Business Automation in 2025',
-      slug: 'ai-transforming-business-automation-2025',
-      excerpt: 'Explore how intelligent automation helps businesses save time and scale faster.',
-      published_at: '2025-05-28T00:00:00Z',
-      category_name: 'AI & Automation',
-    },
-    {
-      id: '2',
-      title: 'Understanding Option Chain Like a Pro',
-      slug: 'understanding-option-chain-like-a-pro',
-      excerpt: 'A beginner-friendly guide to reading option chain data and making smarter trades.',
-      published_at: '2025-05-26T00:00:00Z',
-      category_name: 'Market Updates',
-    },
-    {
-      id: '3',
-      title: 'Why ERP is Essential for Growing Businesses',
-      slug: 'why-erp-is-essential-for-growing-businesses',
-      excerpt: 'Discover how ERP systems improve efficiency, visibility and profitability.',
-      published_at: '2025-05-24T00:00:00Z',
-      category_name: 'Business',
-    },
-  ];
-
-  const itemsToRender = posts && posts.length > 0 ? posts : defaultPosts;
+  const itemsToRender = posts || [];
 
   return (
     <div className="py-12 md:py-20 bg-[#f1f8f3]">
@@ -56,35 +29,51 @@ export default async function InsightsPage() {
           <SectionHeading
             title="Insights & Market Updates"
             highlightText="Insights"
-            subtitle="Thought leadership, tech deep dives, and market analysis from UniqueAI."
+            subtitle="Thought leadership, tech deep dives, and market analysis from Unique Fortune Traders."
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {itemsToRender.map((post: any, index) => {
-            const catName = post.category?.name || post.category_name || 'Technology';
-            const isPink = catName.toLowerCase().includes('market');
-            const dateStr = post.published_at
-              ? new Date(post.published_at).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                })
-              : '28 May 2025';
+        {itemsToRender.length === 0 ? (
+          <Reveal direction="up">
+            <div className="py-16 text-center bg-white rounded-2xl border border-gray-100 max-w-xl mx-auto shadow-xs">
+              <p className="text-base font-bold text-gray-800">No articles published yet</p>
+              <p className="text-xs text-gray-500 mt-1">Articles published from the admin panel will appear here.</p>
+            </div>
+          </Reveal>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {itemsToRender.map((post: any, index) => {
+              const catName = post.blog_categories?.name || post.category?.name || 'Technology';
+              const isPink = catName.toLowerCase().includes('market');
+              const dateStr = post.published_at
+                ? new Date(post.published_at).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                : 'Recently';
 
-            return (
-              <Reveal key={post.id || index} direction="up" delay={index * 0.1}>
-                <Card className="h-full flex flex-col p-0 overflow-hidden bg-white border border-emerald-100 hover:border-emerald-300 transition-all group">
-                  <div className="relative h-44 w-full bg-gray-900 flex items-center justify-center p-4">
-                    <div className="absolute top-3 left-3 z-10">
-                      <Badge variant={isPink ? 'pink' : 'emerald'}>
-                        {catName}
-                      </Badge>
+              return (
+                <Reveal key={post.id || index} direction="up" delay={index * 0.1}>
+                  <Card className="h-full flex flex-col p-0 overflow-hidden bg-white border border-emerald-100 hover:border-emerald-300 transition-all group">
+                    <div className="relative h-48 w-full bg-gray-900 overflow-hidden">
+                      <div className="absolute top-3 left-3 z-10">
+                        <Badge variant={isPink ? 'pink' : 'emerald'}>
+                          {catName}
+                        </Badge>
+                      </div>
+                      {post.featured_image_url ? (
+                        <img
+                          src={post.featured_image_url}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center p-4 text-white font-extrabold text-sm text-center bg-gradient-to-br from-slate-800 to-slate-950">
+                          {post.title}
+                        </div>
+                      )}
                     </div>
-                    <div className="text-white font-extrabold text-sm text-center">
-                      {post.title}
-                    </div>
-                  </div>
 
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
@@ -115,6 +104,7 @@ export default async function InsightsPage() {
             );
           })}
         </div>
+        )}
 
       </div>
     </div>

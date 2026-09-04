@@ -1,14 +1,13 @@
 'use client';
 
-import { ShieldCheck, Settings, Users, Headphones, Award } from 'lucide-react';
-import { SectionHeading } from '@/components/ui/section-heading';
+import { Sparkles, ShieldCheck, Layers, Headphones, TrendingUp } from 'lucide-react';
 import { Reveal } from '@/components/animations/reveal';
 
 interface WhyChooseProps {
   data?: {
     title?: string;
     benefits?: Array<{
-      icon?: string;
+      icon?: any;
       title: string;
       description: string;
     }>;
@@ -16,81 +15,81 @@ interface WhyChooseProps {
 }
 
 export function WhyChoose({ data }: WhyChooseProps) {
-  const defaultBenefits = [
+  const defaultPropositions = [
+    {
+      icon: Sparkles,
+      iconBg: 'bg-pink-100 text-[#e6005c]',
+      title: 'AI-Driven Technology',
+      description: 'Intelligent systems that learn and adapt',
+    },
     {
       icon: ShieldCheck,
-      title: '100% Secure',
-      description: 'Your data is safe with enterprise grade security.',
+      iconBg: 'bg-emerald-100 text-emerald-600',
+      title: '100% Secure & Compliant',
+      description: 'Enterprise-grade security and data protection',
     },
     {
-      icon: Settings,
-      title: 'Custom Solutions',
-      description: 'Tailored software that fits your exact business needs.',
-    },
-    {
-      icon: Users,
-      title: 'Expert Team',
-      description: '15+ years of experience across multiple domains.',
+      icon: Layers,
+      iconBg: 'bg-orange-100 text-orange-600',
+      title: 'Custom-Built Solutions',
+      description: 'Tailored specifically to your business needs',
     },
     {
       icon: Headphones,
-      title: '24/7 Support',
-      description: "We're with you at every step of your journey.",
+      iconBg: 'bg-purple-100 text-purple-600',
+      title: '24/7 Dedicated Support',
+      description: 'Round-the-clock expert technical assistance',
     },
     {
-      icon: Award,
-      title: 'Proven Results',
-      description: 'Trusted by 1000+ businesses across India.',
+      icon: TrendingUp,
+      iconBg: 'bg-teal-100 text-teal-600',
+      title: 'Proven Track Record',
+      description: 'Trusted by 1000+ businesses across India',
     },
   ];
 
-  const benefitsToRender = data?.benefits && data.benefits.length > 0 ? data.benefits : defaultBenefits;
+  const itemsToRender =
+    data?.benefits && data.benefits.length >= 5
+      ? data.benefits.map((b, idx) => ({
+          icon: defaultPropositions[idx]?.icon || Sparkles,
+          iconBg: defaultPropositions[idx]?.iconBg || 'bg-pink-100 text-[#e6005c]',
+          title: b.title,
+          description: b.description,
+        }))
+      : defaultPropositions;
 
   return (
-    <section className="py-12 bg-[#f1f8f3]">
+    <section className="py-4 sm:py-6 pb-8 sm:pb-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#e4f3e7] rounded-3xl p-8 md:p-12 border border-emerald-200/60 shadow-sm">
-          
-          <Reveal direction="up">
-            <SectionHeading
-              title="Why Businesses Choose UniqueAI?"
-              highlightText="UniqueAI?"
-              align="center"
-              className="mb-10"
-            />
-          </Reveal>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {benefitsToRender.map((item, index) => {
-              const IconComponent =
-                typeof item.icon === 'function' || typeof item.icon === 'object'
-                  ? (item.icon as any)
-                  : index === 0
-                  ? ShieldCheck
-                  : index === 1
-                  ? Settings
-                  : index === 2
-                  ? Users
-                  : index === 3
-                  ? Headphones
-                  : Award;
+        <div className="bg-slate-50/70 rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-gray-200/80 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-6">
+            {itemsToRender.map((item, index) => {
+              const IconComponent = item.icon;
 
               return (
-                <Reveal key={index} direction="up" delay={index * 0.08}>
-                  <div className="flex flex-col items-center text-center p-4 bg-white/70 rounded-2xl border border-emerald-100 backdrop-blur-xs h-full hover:bg-white transition-colors">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3">
-                      <IconComponent className="w-6 h-6" />
+                <Reveal key={index} direction="up" delay={index * 0.05}>
+                  <div
+                    className={`flex items-center sm:items-start gap-3 p-3 rounded-xl bg-white sm:bg-transparent border border-gray-100 sm:border-0 shadow-2xs sm:shadow-none h-full ${
+                      index === 4 ? 'sm:col-span-2 lg:col-span-1' : ''
+                    }`}
+                  >
+                    <div
+                      className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-full ${item.iconBg} flex items-center justify-center flex-shrink-0 shadow-xs`}
+                    >
+                      <IconComponent className="w-5 h-5" />
                     </div>
-                    <h4 className="text-base font-bold text-gray-900 mb-1">{item.title}</h4>
-                    <p className="text-xs text-gray-600 leading-normal">{item.description}</p>
+                    <div className="min-w-0">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">{item.title}</h4>
+                      <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed mt-0.5">{item.description}</p>
+                    </div>
                   </div>
                 </Reveal>
               );
             })}
           </div>
-
         </div>
       </div>
     </section>
   );
 }
+

@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -24,15 +25,15 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
 
   const getLinkClasses = (path: string) =>
     cn(
-      'px-3.5 py-2 text-sm transition-colors',
+      'px-3.5 py-2 text-sm transition-colors border-b-2',
       isActive(path)
-        ? 'font-bold text-rose-500 border-b-2 border-rose-500'
-        : 'font-medium text-gray-700 hover:text-rose-500'
+        ? 'font-bold text-rose-500 border-rose-500'
+        : 'font-medium text-gray-700 border-transparent hover:text-rose-500'
     );
 
   const getMobileLinkClasses = (path: string) =>
     cn(
-      'block px-3 py-2 rounded-lg text-base transition-colors',
+      'block px-3 py-2.5 rounded-lg text-base transition-colors',
       isActive(path)
         ? 'font-semibold text-rose-500 bg-rose-50/60'
         : 'font-medium text-gray-700 hover:bg-emerald-50'
@@ -41,19 +42,24 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-[#f1f8f3]/95 backdrop-blur-md border-b border-emerald-100/60 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           
-          {/* Logo & Tagline */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20 text-white font-extrabold text-xl group-hover:scale-105 transition-transform flex-shrink-0">
-              U
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-gray-900 leading-none">
-                {companyName}<span className="text-amber-500">.</span>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+            <Image
+              src="/unique-fortune-logo.png"
+              alt="Unique Fortune Logo"
+              width={48}
+              height={48}
+              className="h-8 sm:h-12 w-auto object-contain group-hover:opacity-90 transition-opacity flex-shrink-0"
+              priority
+            />
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm sm:text-lg font-black tracking-tight text-amber-700 leading-none" style={{ fontFamily: 'Georgia, serif' }}>
+                Unique Fortune
               </span>
-              <span className="text-[9px] font-bold text-gray-500 tracking-wider uppercase mt-1 whitespace-nowrap">
-                TECHNOLOGY FOR A SMARTER TOMORROW
+              <span className="text-[8px] sm:text-[11px] font-bold tracking-[0.12em] sm:tracking-[0.15em] text-amber-500 uppercase mt-0.5">
+                Traders
               </span>
             </div>
           </Link>
@@ -74,10 +80,10 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
                 onClick={() => setSolutionsOpen(!solutionsOpen)}
                 onMouseEnter={() => setSolutionsOpen(true)}
                 className={cn(
-                  "inline-flex items-center gap-1 px-3.5 py-2 text-sm transition-colors cursor-pointer",
+                  "inline-flex items-center gap-1 px-3.5 py-2 text-sm transition-colors cursor-pointer border-b-2",
                   isActive('/solutions')
-                    ? 'font-bold text-rose-500 border-b-2 border-rose-500'
-                    : 'font-medium text-gray-700 hover:text-rose-500'
+                    ? 'font-bold text-rose-500 border-rose-500'
+                    : 'font-medium text-gray-700 border-transparent hover:text-rose-500'
                 )}
               >
                 Solutions
@@ -131,7 +137,7 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
 
           {/* Action CTAs: Login & Get Started */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link href="/admin/login">
+            <Link href="/login">
               <Button variant="outline" size="sm" className="font-semibold text-gray-700 border-emerald-200 shadow-sm shadow-pink-500/5">
                 Login
               </Button>
@@ -196,7 +202,7 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
           </Link>
 
           <div className="pt-2 flex flex-col gap-2">
-            <Link href="/admin/login" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outline" size="md" className="w-full">
                 Login
               </Button>

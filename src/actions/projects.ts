@@ -16,6 +16,8 @@ export async function upsertProject(formData: FormData): Promise<void> {
   const solution_description = formData.get('solution_description') as string || null;
   const outcome_description = formData.get('outcome_description') as string || null;
   const live_url = formData.get('live_url') as string || null;
+  const thumbnail_url = formData.get('thumbnail_url') as string || null;
+  const featured_image_url = formData.get('featured_image_url') as string || null;
   const tech_stack_str = formData.get('tech_stack') as string || '';
   const is_published = formData.get('is_published') === 'true' || formData.get('is_published') === 'on';
   const is_featured = formData.get('is_featured') === 'true' || formData.get('is_featured') === 'on';
@@ -34,6 +36,8 @@ export async function upsertProject(formData: FormData): Promise<void> {
     solution_description,
     outcome_description,
     live_url,
+    thumbnail_url,
+    featured_image_url,
     tech_stack,
     is_published,
     is_featured,

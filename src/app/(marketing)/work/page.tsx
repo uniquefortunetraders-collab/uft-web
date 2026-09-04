@@ -57,7 +57,7 @@ export default async function WorkPage() {
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {itemsToRender.map((project, index) => {
             const isFintech = project.category?.toLowerCase().includes('fintech');
             return (

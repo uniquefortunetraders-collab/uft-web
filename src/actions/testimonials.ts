@@ -10,6 +10,7 @@ export async function upsertTestimonial(formData: FormData): Promise<void> {
   const client_name = formData.get('client_name') as string;
   const client_role = formData.get('client_role') as string || null;
   const company_name = formData.get('company_name') as string || null;
+  const avatar_url = formData.get('avatar_url') as string || null;
   const rating = parseInt((formData.get('rating') as string) || '5', 10);
   const content = formData.get('content') as string;
   const is_published = formData.get('is_published') === 'true' || formData.get('is_published') === 'on';
@@ -19,6 +20,7 @@ export async function upsertTestimonial(formData: FormData): Promise<void> {
     client_name,
     client_role,
     company_name,
+    avatar_url,
     rating,
     content,
     is_published,

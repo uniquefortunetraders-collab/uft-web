@@ -14,21 +14,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex items-center justify-center font-semibold rounded-full transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]",
           {
-            "bg-[#0b1e13] text-white hover:bg-emerald-900 shadow-md shadow-pink-500/20 hover:shadow-lg hover:shadow-pink-500/30 border border-emerald-900":
+            "bg-[#e6005c] text-white hover:bg-[#cc0052] shadow-md shadow-pink-500/25 hover:shadow-lg hover:shadow-pink-500/35 border border-[#e6005c]":
               variant === "primary",
-            "bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm":
+            "bg-slate-900 text-white hover:bg-slate-800 shadow-sm":
               variant === "secondary",
-            "border border-emerald-200 bg-white/90 text-gray-800 hover:bg-emerald-50/80 hover:border-emerald-300 hover:text-pink-600 shadow-sm shadow-pink-500/10 backdrop-blur-sm":
+            "border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 hover:border-gray-300 hover:text-[#e6005c] shadow-xs":
               variant === "outline",
-            "text-gray-700 hover:text-pink-600 hover:bg-emerald-100/50":
+            "text-gray-700 hover:text-[#e6005c] hover:bg-pink-50/50":
               variant === "ghost",
             "bg-amber-500 text-white hover:bg-amber-600 shadow-md shadow-amber-500/20":
               variant === "gold",
           },
           {
             "px-4 py-2 text-xs": size === "sm",
-            "px-6 py-2.5 text-sm": size === "md",
-            "px-8 py-3.5 text-base font-semibold": size === "lg",
+            "px-5 py-2.5 text-sm": size === "md",
+            "px-7 py-3 text-sm font-semibold": size === "lg",
           },
           className
         )}

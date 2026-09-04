@@ -13,6 +13,7 @@ export async function upsertBlogPost(formData: FormData): Promise<void> {
   const excerpt = formData.get('excerpt') as string || null;
   const content = formData.get('content') as string;
   const author_name = formData.get('author_name') as string || 'UniqueAI Team';
+  const featured_image_url = formData.get('featured_image_url') as string || null;
   const reading_time = parseInt((formData.get('reading_time') as string) || '5', 10);
   const status = (formData.get('status') as string) || 'published';
 
@@ -22,6 +23,7 @@ export async function upsertBlogPost(formData: FormData): Promise<void> {
     category_id,
     excerpt,
     content,
+    featured_image_url,
     author_name,
     reading_time,
     status,

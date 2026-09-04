@@ -1,7 +1,7 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
-import { SectionHeading } from '@/components/ui/section-heading';
+import { useRef } from 'react';
+import { Search, FileText, Code2, Rocket, Headphones, ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/animations/reveal';
 
 interface ProcessStepsProps {
@@ -17,74 +17,164 @@ interface ProcessStepsProps {
 }
 
 export function ProcessSteps({ data }: ProcessStepsProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 300;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   const defaultSteps = [
     {
-      number: 1,
+      number: '01',
       title: 'Discover',
-      description: 'We understand your business goals.',
+      description: 'We understand your business and goals',
+      icon: Search,
+      iconColor: 'bg-emerald-50 text-emerald-600 border-emerald-200',
     },
     {
-      number: 2,
+      number: '02',
       title: 'Plan',
-      description: 'We create a roadmap tailored to your needs.',
+      description: 'We create a roadmap tailored to your needs',
+      icon: FileText,
+      iconColor: 'bg-blue-50 text-blue-600 border-blue-200',
     },
     {
-      number: 3,
-      title: 'Design',
-      description: 'We design intuitive and engaging experiences.',
-    },
-    {
-      number: 4,
+      number: '03',
       title: 'Develop',
-      description: 'We build with quality, security and scalability.',
+      description: 'We build with quality, security and scalability',
+      icon: Code2,
+      iconColor: 'bg-purple-50 text-purple-600 border-purple-200',
     },
     {
-      number: 5,
-      title: 'Deploy & Support',
-      description: 'We deploy smoothly and support your growth.',
+      number: '04',
+      title: 'Deploy',
+      description: 'We ensure smooth launch and onboarding',
+      icon: Rocket,
+      iconColor: 'bg-pink-50 text-[#e6005c] border-pink-200',
+    },
+    {
+      number: '05',
+      title: 'Support',
+      description: 'We support and scale as you grow',
+      icon: Headphones,
+      iconColor: 'bg-rose-50 text-rose-600 border-rose-200',
     },
   ];
 
-  const stepsToRender = data?.steps && data.steps.length > 0 ? data.steps : defaultSteps;
+  const stepsToRender =
+    data?.steps && data.steps.length >= 5
+      ? data.steps.map((s, idx) => ({
+          number: s.number < 10 ? `0${s.number}` : `${s.number}`,
+          title: s.title,
+          description: s.description,
+          icon: defaultSteps[idx]?.icon || Search,
+          iconColor: defaultSteps[idx]?.iconColor || 'bg-emerald-50 text-emerald-600 border-emerald-200',
+        }))
+      : defaultSteps;
 
   return (
-    <section className="py-16 md:py-24 bg-[#f1f8f3]">
+    <section className="py-8 md:py-10 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <Reveal direction="up">
-          <SectionHeading
-            title="Our Proven Process"
-            highlightText="Proven"
-            subtitle="From idea to impact — we build technology that drives real results."
-          />
-        </Reveal>
+        {/* Header */}
+        <div className="flex items-end justify-between mb-8 sm:mb-10">
+          <Reveal direction="up">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#e6005c] block mb-2">
+              OUR PROCESS
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+              Our Proven Approach to <br className="hidden sm:inline" />
+              Delivering Excellence.
+            </h2>
+          </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 relative">
+          {/* Mobile Swipe Hint */}
+          <div className="flex md:hidden items-center gap-1 text-xs text-slate-400 font-medium pb-1">
+            <span>Swipe</span>
+            <ArrowRight className="w-3.5 h-3.5 text-[#e6005c]" />
+          </div>
+        </div>
+
+        {/* Mobile View (< md): Parallel Clean Steps Matching Desktop Icon Style */}
+        <div
+          ref={scrollContainerRef}
+          className="flex md:hidden items-center overflow-x-auto gap-2 pb-4 pt-1 snap-x snap-mandatory scroll-smooth -mx-4 px-4"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           {stepsToRender.map((step, index) => {
-            const numFormatted = step.number < 10 ? `0${step.number}` : `${step.number}`;
+            const IconComponent = step.icon;
+
             return (
-              <Reveal key={step.number || index} direction="up" delay={index * 0.1}>
-                <div className="flex flex-col items-center text-center relative group">
-                  
-                  {/* Pink Badge Number Pill */}
-                  <div className="w-10 h-10 rounded-full bg-pink-100 border-2 border-pink-400 text-pink-600 font-extrabold text-sm flex items-center justify-center mb-4 shadow-xs group-hover:bg-pink-500 group-hover:text-white transition-all">
-                    {numFormatted}
+              <div key={index} className="flex items-center flex-shrink-0 snap-center">
+                {/* Step Item (Clean, unboxed matching desktop) */}
+                <div className="flex flex-col items-center text-center w-[165px] p-2.5">
+                  <div
+                    className={`w-13 h-13 rounded-2xl border flex items-center justify-center mb-3 shadow-xs ${step.iconColor}`}
+                  >
+                    <IconComponent className="w-5 h-5" />
                   </div>
 
-                  {/* Connecting Arrow for Desktop */}
-                  {index < stepsToRender.length - 1 && (
-                    <div className="hidden md:block absolute top-5 left-[60%] w-[80%] z-0 text-emerald-300 pointer-events-none">
-                      <ArrowRight className="w-5 h-5 mx-auto text-emerald-400 opacity-60" />
-                    </div>
-                  )}
+                  <h4 className="text-sm font-bold text-slate-900 mb-1 leading-snug">
+                    {step.number}. {step.title}
+                  </h4>
 
-                  {/* Step Title */}
-                  <h4 className="text-base font-bold text-gray-900 mb-1.5">{step.title}</h4>
-
-                  {/* Step Description */}
-                  <p className="text-xs text-gray-600 leading-normal max-w-xs">{step.description}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed max-w-[145px]">
+                    {step.description}
+                  </p>
                 </div>
-              </Reveal>
+
+                {/* Arrow pointing to next step */}
+                {index < stepsToRender.length - 1 && (
+                  <div className="flex items-center justify-center px-0.5 text-gray-300 flex-shrink-0">
+                    <ChevronRight className="w-4 h-4 text-gray-300 stroke-[2.5]" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop View (md+): Original Clean 5-Step Horizontal Flow */}
+        <div className="hidden md:flex items-center justify-between gap-6 relative">
+          {stepsToRender.map((step, index) => {
+            const IconComponent = step.icon;
+
+            return (
+              <div key={index} className="flex items-center flex-1">
+                <Reveal direction="up" delay={index * 0.1} className="w-full">
+                  <div className="flex flex-col items-center text-center p-4 bg-white rounded-2xl hover:bg-slate-50/70 transition-colors group">
+                    {/* Icon Container */}
+                    <div
+                      className={`w-14 h-14 rounded-2xl border flex items-center justify-center mb-4 shadow-xs ${step.iconColor} group-hover:scale-110 transition-transform`}
+                    >
+                      <IconComponent className="w-6 h-6" />
+                    </div>
+
+                    {/* Step Title with Number */}
+                    <h4 className="text-sm font-bold text-slate-900 mb-1">
+                      {step.number}. {step.title}
+                    </h4>
+
+                    {/* Description */}
+                    <p className="text-xs text-slate-500 leading-relaxed max-w-[180px]">
+                      {step.description}
+                    </p>
+                  </div>
+                </Reveal>
+
+                {/* Arrow Divider between steps for Desktop */}
+                {index < stepsToRender.length - 1 && (
+                  <div className="flex items-center justify-center px-1 text-gray-300 flex-shrink-0">
+                    <ChevronRight className="w-5 h-5 text-gray-300 stroke-[2.5]" />
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
@@ -93,3 +183,4 @@ export function ProcessSteps({ data }: ProcessStepsProps) {
     </section>
   );
 }
+

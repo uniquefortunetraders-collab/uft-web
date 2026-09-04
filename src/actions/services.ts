@@ -13,6 +13,8 @@ export async function upsertService(formData: FormData): Promise<void> {
   const description = formData.get('description') as string || null;
   const cta_label = formData.get('cta_label') as string || 'Get Free Consultation';
   const cta_url = formData.get('cta_url') as string || '/contact';
+  const thumbnail_url = formData.get('thumbnail_url') as string || null;
+  const icon_url = formData.get('icon_url') as string || null;
   const is_published = formData.get('is_published') === 'true' || formData.get('is_published') === 'on';
   const is_featured = formData.get('is_featured') === 'true' || formData.get('is_featured') === 'on';
 
@@ -23,6 +25,8 @@ export async function upsertService(formData: FormData): Promise<void> {
     description,
     cta_label,
     cta_url,
+    thumbnail_url,
+    icon_url,
     is_published,
     is_featured,
   };

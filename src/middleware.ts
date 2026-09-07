@@ -49,16 +49,28 @@ export async function middleware(request: NextRequest) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = '/admin/login';
       loginUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(loginUrl);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      
+      // Copy all updated cookies to the redirect response to avoid dropping auth state or loops
+      response.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+      });
+      return redirectResponse;
     }
   }
 
-  // If already logged in and visiting /admin/login, redirect to /admin
+  // If already logged in and visiting /admin/login directly, redirect to /admin
   if (pathname === '/admin/login' && user) {
     const adminUrl = request.nextUrl.clone();
     adminUrl.pathname = '/admin';
     adminUrl.search = '';
-    return NextResponse.redirect(adminUrl);
+    const redirectResponse = NextResponse.redirect(adminUrl);
+    
+    // Copy all updated cookies to the redirect response
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return redirectResponse;
   }
 
   return response;

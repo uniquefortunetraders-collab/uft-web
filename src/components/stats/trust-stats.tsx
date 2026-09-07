@@ -31,21 +31,8 @@ export function TrustStats({ stats }: TrustStatsProps) {
           <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#0b1329] border border-slate-800 text-white p-4 sm:p-8 md:p-10 shadow-2xl shadow-slate-900/20">
             
             {/* Background Digital Glowing Accents */}
-            <div className="absolute -right-16 -top-16 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute right-10 bottom-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
-            
-            {/* Abstract Circuit Graphic on right */}
-            <div className="absolute right-0 top-0 bottom-0 w-1/3 opacity-20 pointer-events-none hidden lg:block">
-              <svg viewBox="0 0 300 150" className="w-full h-full text-blue-400" fill="none" stroke="currentColor">
-                <circle cx="200" cy="75" r="50" strokeWidth="1" strokeDasharray="4 4" />
-                <circle cx="200" cy="75" r="30" strokeWidth="1.5" />
-                <path d="M 150,75 L 100,40 L 40,40" strokeWidth="1.5" />
-                <path d="M 150,75 L 100,110 L 40,110" strokeWidth="1.5" />
-                <circle cx="40" cy="40" r="3" fill="currentColor" />
-                <circle cx="40" cy="110" r="3" fill="currentColor" />
-                <circle cx="200" cy="75" r="4" fill="#e6005c" stroke="#e6005c" />
-              </svg>
-            </div>
+            <div className="absolute -right-16 -top-16 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute right-10 bottom-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
 
             {/* Header */}
             <div className="relative z-10 mb-5 sm:mb-8 text-center sm:text-left">

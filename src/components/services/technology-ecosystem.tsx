@@ -130,11 +130,32 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
         {/* Solutions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {solutionsToRender.map((solution, index) => {
-            const isRose = solution.cta_color === 'rose';
+            // Dynamic colorful themes mixing emerald green, hot pink, and warm gold
+            const colorThemes = [
+              {
+                hoverTitle: 'group-hover:text-emerald-700',
+                checkBg: 'bg-emerald-600',
+                btnClass: 'border-emerald-300/90 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-800',
+                btnIcon: 'text-emerald-700',
+              },
+              {
+                hoverTitle: 'group-hover:text-[#e6005c]',
+                checkBg: 'bg-[#e6005c]',
+                btnClass: 'border-pink-300/90 bg-[#fff0f5] hover:bg-[#ffe6ef] text-[#e6005c]',
+                btnIcon: 'text-[#e6005c]',
+              },
+              {
+                hoverTitle: 'group-hover:text-amber-700',
+                checkBg: 'bg-amber-500',
+                btnClass: 'border-amber-300/90 bg-amber-50/80 hover:bg-amber-100 text-amber-900',
+                btnIcon: 'text-amber-700',
+              },
+            ];
+            const theme = colorThemes[index % colorThemes.length];
 
             return (
               <Reveal key={solution.id || solution.slug || index} direction="up" delay={index * 0.1}>
-                <div className="h-full flex flex-col bg-white rounded-[28px] border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-slate-300 transition-all duration-300 overflow-hidden group">
+                <div className="h-full flex flex-col bg-white rounded-[28px] border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-emerald-200 transition-all duration-300 overflow-hidden group">
 
                   {/* Top Showcase Area - Image Fills 100% of the header */}
                   <div className="h-60 sm:h-64 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center">
@@ -159,7 +180,7 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
                   <div className="p-7 sm:p-8 flex-1 flex flex-col justify-between">
                     <div>
                       {/* Title */}
-                      <h3 className={`text-2xl font-black text-slate-900 mb-3 tracking-tight leading-snug transition-colors ${isRose ? 'group-hover:text-[#e6005c]' : 'group-hover:text-emerald-700'}`}>
+                      <h3 className={`text-2xl font-black text-slate-900 mb-3 tracking-tight leading-snug transition-colors ${theme.hoverTitle}`}>
                         {solution.title}
                       </h3>
 
@@ -179,9 +200,7 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
                               className="flex items-center gap-2.5 text-xs sm:text-[13px] text-slate-700 font-medium"
                             >
                               <div
-                                className={`w-4 h-4 rounded-full text-white flex items-center justify-center flex-shrink-0 shadow-2xs ${
-                                  isRose ? 'bg-[#e6005c]' : 'bg-emerald-500'
-                                }`}
+                                className={`w-4 h-4 rounded-full text-white flex items-center justify-center flex-shrink-0 shadow-2xs ${theme.checkBg}`}
                               >
                                 <Check className="w-2.5 h-2.5 stroke-[3.5]" />
                               </div>
@@ -196,17 +215,11 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
                     <div className="mt-auto pt-2">
                       <Link
                         href={`/solutions/${solution.slug}`}
-                        className={`w-full py-3.5 px-6 rounded-full border text-xs sm:text-sm font-bold flex items-center justify-between transition-all duration-200 group/btn shadow-2xs ${
-                          isRose
-                            ? 'border-pink-300/80 bg-[#fff0f5] hover:bg-[#ffe6ef] text-[#e6005c]'
-                            : 'border-emerald-300/80 bg-[#f0faf5] hover:bg-[#e2f5ec] text-emerald-700'
-                        }`}
+                        className={`w-full py-3.5 px-6 rounded-full border text-xs sm:text-sm font-bold flex items-center justify-between transition-all duration-200 group/btn shadow-2xs ${theme.btnClass}`}
                       >
                         <span>{solution.cta_label}</span>
                         <ArrowRight
-                          className={`w-4 h-4 transition-transform group-hover/btn:translate-x-1 ${
-                            isRose ? 'text-[#e6005c]' : 'text-emerald-600'
-                          }`}
+                          className={`w-4 h-4 transition-transform group-hover/btn:translate-x-1 ${theme.btnIcon}`}
                         />
                       </Link>
                     </div>

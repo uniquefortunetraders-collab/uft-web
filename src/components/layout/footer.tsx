@@ -314,13 +314,21 @@ export function Footer({
 
           </div>
 
-          {/* Bottom Bar */}
-          <div className="pt-6 md:pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3 text-center sm:text-left">
-            <div>© 2026 {companyName}. All rights reserved.</div>
-            <div className="flex items-center gap-1">
-              <span>Made with</span>
-              <Heart className="w-3.5 h-3.5 text-[#e6005c] fill-[#e6005c]" />
-              <span>in Kerala</span>
+          {/* Bottom Bar - Centered */}
+          <div className="pt-6 md:pt-8 flex flex-col items-center justify-center text-xs text-slate-500 gap-1.5 text-center">
+            <div>
+              © 2026 {companyName === 'UniqueAI' ? 'Unique Fortune Traders' : companyName}. All rights reserved.
+            </div>
+            <div className="text-[11px] text-slate-400">
+              Crafted by{' '}
+              <a
+                href="https://www.ekodrix.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-slate-600 hover:text-[#e6005c] transition-colors underline underline-offset-4 decoration-slate-300 hover:decoration-[#e6005c]"
+              >
+                Ekodrix
+              </a>
             </div>
           </div>
         </div>

@@ -13,8 +13,8 @@ interface FeaturedWorkProps {
 
 const BADGE_COLORS = [
   'bg-pink-100 text-[#e6005c] border-pink-200',
-  'bg-emerald-100 text-emerald-700 border-emerald-200',
-  'bg-slate-100 text-slate-700 border-slate-200',
+  'bg-emerald-100 text-emerald-800 border-emerald-200',
+  'bg-amber-100 text-amber-800 border-amber-200',
 ];
 
 export function FeaturedWork({ blogs = [], projects = [] }: FeaturedWorkProps) {
@@ -71,7 +71,7 @@ export function FeaturedWork({ blogs = [], projects = [] }: FeaturedWorkProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {itemsToRender.map((item, index) => (
               <Reveal key={item.id || index} direction="up" delay={index * 0.1}>
-              <div className="h-full flex flex-col bg-white rounded-3xl border border-gray-200/90 shadow-sm hover:shadow-xl hover:border-gray-300 transition-all duration-300 overflow-hidden group">
+              <div className="h-full flex flex-col bg-white rounded-3xl border border-gray-200/90 shadow-sm hover:shadow-xl hover:border-pink-200 transition-all duration-300 overflow-hidden group">
 
                 {/* Visual Media Header */}
                 <div className="relative h-52 w-full overflow-hidden bg-slate-900">

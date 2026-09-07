@@ -63,7 +63,7 @@ export function ProcessSteps({ data }: ProcessStepsProps) {
       title: 'Support',
       description: 'We support and scale as you grow',
       icon: Headphones,
-      iconColor: 'bg-rose-50 text-rose-600 border-rose-200',
+      iconColor: 'bg-teal-50 text-teal-700 border-teal-200',
     },
   ];
 

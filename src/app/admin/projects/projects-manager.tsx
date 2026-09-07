@@ -1,69 +1,110 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { upsertProject, deleteProject } from '@/actions/projects';
-import { Plus, Trash2, Pencil, X, Image as ImageIcon } from 'lucide-react';
-import { Project } from '@/types/database';
+import { upsertProduct, deleteProduct } from '@/actions/products';
+import { Plus, Trash2, Pencil, X, Check, MessageCircle, Sparkles, Tag, ShieldCheck } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/image-upload';
+import { Project } from '@/types/database';
 
-interface ProjectsManagerProps {
-  initialProjects: Project[];
+interface ProductsManagerProps {
+  initialProducts: Project[];
 }
 
-export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+export function ProductsManager({ initialProducts }: ProductsManagerProps) {
+  const [editingItem, setEditingItem] = useState<Project | null>(null);
   const [formKey, setFormKey] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const formElementRef = useRef<HTMLFormElement>(null);
 
+  // Live preview states
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [period, setPeriod] = useState('');
+  const [badge, setBadge] = useState('');
+  const [description, setDescription] = useState('');
+  const [featuresText, setFeaturesText] = useState('');
+
   const handleEdit = (item: Project) => {
-    setEditingProject(item);
+    setEditingItem(item);
+    setTitle(item.title || '');
+    setPrice(item.client_name || '');
+    setPeriod(item.outcome_description || '');
+    setBadge(item.category || '');
+    setDescription(item.short_description || '');
+    setFeaturesText(
+      item.tech_stack
+        ? Array.isArray(item.tech_stack)
+          ? item.tech_stack.join('\n')
+          : String(item.tech_stack)
+        : ''
+    );
     scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleCancel = () => {
     formElementRef.current?.reset();
-    setEditingProject(null);
+    setEditingItem(null);
+    setTitle('');
+    setPrice('');
+    setPeriod('');
+    setBadge('');
+    setDescription('');
+    setFeaturesText('');
     setFormKey((k) => k + 1);
   };
 
   return (
     <div className="space-y-8 max-w-6xl">
-      <div className="flex items-center justify-between">
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">Case Studies & Work CMS</h1>
-          <p className="text-xs text-gray-500 mt-1">Manage featured client case studies and portfolio projects.</p>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-50 text-[#e6005c] text-xs font-bold mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Products &amp; Pricing Plans CMS</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            Products &amp; Software Plans
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
+            Add, update, or price software trading algorithms, server packages, and SaaS products.
+          </p>
         </div>
       </div>
 
-      {/* Add / Edit Case Study Form */}
+      {/* Add / Edit Product Plan Form */}
       <div ref={scrollRef}>
-        <Card className={`p-6 bg-white border transition-colors ${editingProject ? 'border-[#e6005c] ring-1 ring-[#e6005c]/20' : 'border-gray-200'}`}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              {editingProject ? (
+        <Card className={`p-6 sm:p-8 bg-white rounded-3xl border transition-all shadow-sm ${
+          editingItem ? 'border-[#e6005c] ring-2 ring-[#e6005c]/15 shadow-md' : 'border-slate-200/90'
+        }`}>
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              {editingItem ? (
                 <>
-                  <Pencil className="w-4 h-4 text-[#e6005c]" />
-                  <span>Edit Case Study: <span className="text-[#e6005c]">{editingProject.title}</span></span>
+                  <div className="w-8 h-8 rounded-xl bg-pink-100 text-[#e6005c] flex items-center justify-center">
+                    <Pencil className="w-4 h-4" />
+                  </div>
+                  <span>Edit Product: <span className="text-[#e6005c]">{editingItem.title}</span></span>
                 </>
               ) : (
                 <>
-                  <Plus className="w-4 h-4 text-emerald-600" />
-                  <span>Add New Case Study Project</span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <Plus className="w-4 h-4" />
+                  </div>
+                  <span>Add New Product / Plan</span>
                 </>
               )}
             </h2>
 
-            {editingProject && (
+            {editingItem && (
               <button
                 type="button"
                 onClick={handleCancel}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-md transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3.5 py-1.5 rounded-full transition-colors cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Cancel Edit</span>
@@ -73,128 +114,213 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
           <form
             ref={formElementRef}
-            key={`project-form-${editingProject?.id || 'new'}-${formKey}`}
+            key={`product-form-${editingItem?.id || 'new'}-${formKey}`}
             action={async (formData) => {
               setIsSubmitting(true);
               try {
-                await upsertProject(formData);
-                formElementRef.current?.reset();
-                setEditingProject(null);
-                setFormKey((k) => k + 1);
+                await upsertProduct(formData);
+                handleCancel();
               } catch (err) {
                 console.error(err);
               } finally {
                 setIsSubmitting(false);
               }
             }}
-            className="space-y-4"
+            className="space-y-5"
           >
-            {editingProject && (
-              <input type="hidden" name="id" value={editingProject.id} />
+            {editingItem && (
+              <input type="hidden" name="id" value={editingItem.id} />
             )}
 
+            {/* Row 1: Product Name & Badge */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Project Title</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Product / Plan Name <span className="text-[#e6005c]">*</span>
+                </label>
                 <input
-                  key={editingProject ? `title-${editingProject.id}` : 'title-new'}
                   type="text"
                   name="title"
                   required
-                  defaultValue={editingProject?.title || ''}
-                  placeholder="e.g. Smart FinTech Trading Platform"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e6005c] focus:outline-none"
+                  defaultValue={editingItem?.title || ''}
+                  placeholder="e.g. Manual Algo, Auto Without Server, Auto With Server"
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-medium"
                 />
               </div>
+
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Category</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Badge / Ribbon Tag
+                </label>
                 <input
-                  key={editingProject ? `cat-${editingProject.id}` : 'cat-new'}
                   type="text"
-                  name="category"
-                  required
-                  defaultValue={editingProject?.category || ''}
-                  placeholder="e.g. FinTech / E-Commerce / Enterprise ERP"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e6005c] focus:outline-none"
+                  name="badge"
+                  defaultValue={editingItem?.category || ''}
+                  placeholder="e.g. Most Popular for Starters, BEST VALUE, Fully Hands-Free"
+                  onChange={(e) => setBadge(e.target.value)}
+                  className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-medium"
                 />
               </div>
             </div>
 
+            {/* Row 2: Price & Billing Suffix */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Client Name</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Price <span className="text-[#e6005c]">*</span>
+                </label>
                 <input
-                  key={editingProject ? `client-${editingProject.id}` : 'client-new'}
                   type="text"
-                  name="client_name"
-                  defaultValue={editingProject?.client_name || ''}
-                  placeholder="e.g. FinTech Dynamics Ltd."
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e6005c] focus:outline-none"
+                  name="price"
+                  required
+                  defaultValue={editingItem?.client_name || '₹999'}
+                  placeholder="e.g. ₹999, ₹3,999, ₹6,000"
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-bold text-slate-900"
                 />
               </div>
+
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Tech Stack (comma separated)</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Billing Period / Tax Note
+                </label>
                 <input
-                  key={editingProject ? `stack-${editingProject.id}` : 'stack-new'}
                   type="text"
-                  name="tech_stack"
-                  defaultValue={editingProject?.tech_stack ? (Array.isArray(editingProject.tech_stack) ? editingProject.tech_stack.join(', ') : editingProject.tech_stack) : ''}
-                  placeholder="Next.js, Python, Supabase, Tailwind"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e6005c] focus:outline-none"
+                  name="period"
+                  defaultValue={editingItem?.outcome_description || '+ GST'}
+                  placeholder="e.g. + GST, / year, + GST / year, one-time"
+                  onChange={(e) => setPeriod(e.target.value)}
+                  className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-medium"
                 />
               </div>
             </div>
 
-            <ImageUpload
-              key={editingProject ? `thumb-${editingProject.id}` : 'thumb-new'}
-              name="thumbnail_url"
-              label="Project Cover / Thumbnail Image"
-              defaultValue={editingProject?.thumbnail_url}
-              aspectRatio="video"
-              helperText="Drag and drop or upload the primary image displayed on homepage and portfolio cards."
-            />
-
+            {/* Description */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">Short Summary</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Short Description
+              </label>
               <textarea
-                key={editingProject ? `short-${editingProject.id}` : 'short-new'}
-                name="short_description"
+                name="description"
                 rows={2}
-                defaultValue={editingProject?.short_description || ''}
-                placeholder="Brief summary displayed on portfolio cards..."
-                className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e6005c] focus:outline-none"
+                defaultValue={editingItem?.short_description || ''}
+                placeholder="e.g. Best for beginners to learn signals & manual execution. One-time setup support."
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-normal"
               />
             </div>
 
-            <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 text-xs text-gray-700 font-bold cursor-pointer">
+            {/* Product Cover Image Upload */}
+            <ImageUpload
+              key={editingItem ? `thumb-${editingItem.id}` : 'thumb-new'}
+              name="thumbnail_url"
+              label="Product Showcase / Cover Image"
+              defaultValue={editingItem?.thumbnail_url}
+              aspectRatio="video"
+              helperText="Upload or choose the 3D graphic displayed on the product card header."
+            />
+
+            {/* Features (One per line) */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                <span>Features List (One bullet point per line)</span>
+                <span className="text-[11px] text-slate-400 font-normal">e.g. TradingView Signals</span>
+              </label>
+              <textarea
+                name="features"
+                rows={3}
+                defaultValue={
+                  editingItem?.tech_stack
+                    ? Array.isArray(editingItem.tech_stack)
+                      ? editingItem.tech_stack.join('\n')
+                      : String(editingItem.tech_stack)
+                    : '100% Auto Trading\nWhatsApp Support\nBeginner Friendly'
+                }
+                placeholder="TradingView Signals&#10;WhatsApp Support&#10;Beginner Friendly"
+                onChange={(e) => setFeaturesText(e.target.value)}
+                className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-mono"
+              />
+            </div>
+
+            {/* Row 3: Action URLs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  Buy Now Link / URL
+                </label>
                 <input
-                  key={editingProject ? `pub-${editingProject.id}-${editingProject.is_published}` : 'pub-new'}
+                  type="text"
+                  name="buy_url"
+                  defaultValue={editingItem?.live_url || '/contact'}
+                  placeholder="https://... or /contact or UPI link"
+                  className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  WhatsApp Enquiry Text
+                </label>
+                <input
+                  type="text"
+                  name="whatsapp_text"
+                  defaultValue={editingItem?.challenge_description || 'Hello, I want to know more about this plan'}
+                  placeholder="e.g. Hello, I would like to buy Manual Algo plan"
+                  className="w-full px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#e6005c] focus:outline-none bg-slate-50/50 hover:bg-white transition-all font-medium"
+                />
+              </div>
+            </div>
+
+            {/* Toggles */}
+            <div className="flex items-center gap-6 pt-2">
+              <label className="flex items-center gap-2 text-xs text-slate-800 font-bold cursor-pointer">
+                <input
                   type="checkbox"
                   name="is_published"
-                  defaultChecked={editingProject ? editingProject.is_published : true}
-                  className="rounded text-[#e6005c]"
+                  defaultChecked={editingItem ? editingItem.is_published : true}
+                  className="w-4 h-4 rounded text-[#e6005c] accent-[#e6005c]"
                 />
-                Published on Website
+                <span>Published on Website</span>
               </label>
-              <label className="flex items-center gap-2 text-xs text-gray-700 font-bold cursor-pointer">
+
+              <label className="flex items-center gap-2 text-xs text-slate-800 font-bold cursor-pointer">
                 <input
-                  key={editingProject ? `feat-${editingProject.id}-${editingProject.is_featured}` : 'feat-new'}
                   type="checkbox"
                   name="is_featured"
-                  defaultChecked={editingProject ? editingProject.is_featured : true}
-                  className="rounded text-[#e6005c]"
+                  defaultChecked={editingItem ? editingItem.is_featured : true}
+                  className="w-4 h-4 rounded text-[#e6005c] accent-[#e6005c]"
                 />
-                Featured on Homepage
+                <span>Highlight as Best Value / Featured</span>
               </label>
             </div>
 
-            <div className="flex items-center gap-3 pt-2">
-              <Button type="submit" variant="primary" disabled={isSubmitting} className="text-xs">
-                {isSubmitting ? (editingProject ? 'Updating...' : 'Saving...') : editingProject ? 'Update Case Study' : 'Save Case Study'}
+            {/* Submit & Cancel Buttons */}
+            <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isSubmitting}
+                className="px-7 py-3 text-xs sm:text-sm font-bold bg-[#e6005c] hover:bg-[#cc0052] text-white rounded-full shadow-md shadow-pink-500/25 cursor-pointer"
+              >
+                {isSubmitting
+                  ? editingItem
+                    ? 'Updating Plan...'
+                    : 'Saving Plan...'
+                  : editingItem
+                  ? 'Update Product Plan'
+                  : 'Save Product Plan'}
               </Button>
-              {editingProject && (
-                <Button type="button" variant="outline" size="sm" onClick={handleCancel} disabled={isSubmitting} className="text-xs">
+
+              {editingItem && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  onClick={handleCancel}
+                  disabled={isSubmitting}
+                  className="rounded-full text-xs font-semibold cursor-pointer"
+                >
                   Cancel
                 </Button>
               )}
@@ -203,78 +329,135 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         </Card>
       </div>
 
-      {/* Projects List */}
-      <Card className="p-6 bg-white border border-gray-200">
-        <h2 className="text-base font-bold text-gray-900 mb-4">Existing Case Studies ({initialProjects?.length || 0})</h2>
+      {/* Existing Products & Plans List */}
+      <Card className="p-6 sm:p-8 bg-white border border-slate-200/90 rounded-3xl shadow-xs">
+        <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">
+              Current Products &amp; Pricing Plans ({initialProducts?.length || 0})
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              These plans are rendered on the public website under Choose Your Plan.
+            </p>
+          </div>
+        </div>
 
-        {!initialProjects || initialProjects.length === 0 ? (
-          <div className="text-xs text-gray-500 py-6 text-center">No case studies found. Create your first project above.</div>
+        {!initialProducts || initialProducts.length === 0 ? (
+          <div className="text-xs text-slate-500 py-12 text-center bg-slate-50/60 rounded-2xl border border-dashed border-slate-200">
+            <Tag className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+            <div className="font-bold text-slate-700">No Product Plans Added Yet</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Add your first software plan above to display it on the website.</div>
+          </div>
         ) : (
-          <div className="divide-y divide-gray-100">
-            {initialProjects.map((proj) => (
-              <div key={proj.id} className="py-4 flex items-center justify-between gap-4">
-                {proj.thumbnail_url ? (
-                  <div className="relative w-16 h-12 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0 bg-gray-100">
-                    <Image
-                      src={proj.thumbnail_url}
-                      alt={proj.title}
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-16 h-12 rounded-lg border border-dashed border-gray-200 flex items-center justify-center flex-shrink-0 bg-gray-50 text-gray-400">
-                    <ImageIcon className="w-5 h-5" />
-                  </div>
-                )}
-                <div className="space-y-1 flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-gray-900 truncate">{proj.title}</span>
-                    <Badge variant={proj.is_published ? 'emerald' : 'outline'}>
-                      {proj.is_published ? 'Published' : 'Draft'}
-                    </Badge>
-                    {proj.is_featured && (
-                      <Badge variant="pink">Featured</Badge>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {initialProducts.map((plan) => {
+              const featuresList = plan.tech_stack
+                ? Array.isArray(plan.tech_stack)
+                  ? plan.tech_stack
+                  : String(plan.tech_stack).split(',')
+                : [];
+
+              return (
+                <div
+                  key={plan.id}
+                  className={`bg-white rounded-3xl border p-6 flex flex-col justify-between relative transition-all duration-200 ${
+                    plan.is_featured
+                      ? 'border-blue-300 ring-2 ring-blue-500/20 shadow-lg'
+                      : 'border-slate-200/90 hover:border-slate-300 shadow-xs'
+                  }`}
+                >
+                  {/* Badge */}
+                  {plan.category && (
+                    <div className="mb-3">
+                      <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider ${
+                        plan.is_featured
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-emerald-100 text-emerald-800'
+                      }`}>
+                        {plan.category}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Plan Name & Price */}
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight">
+                      {plan.title}
+                    </h3>
+                    
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-2xl sm:text-3xl font-black text-slate-900">
+                        {plan.client_name || '₹999'}
+                      </span>
+                      {plan.outcome_description && (
+                        <span className="text-xs text-slate-500 font-medium">
+                          {plan.outcome_description}
+                        </span>
+                      )}
+                    </div>
+
+                    {plan.short_description && (
+                      <p className="text-xs text-slate-500 mt-2 leading-relaxed font-normal">
+                        {plan.short_description}
+                      </p>
+                    )}
+
+                    {/* Features list */}
+                    {featuresList.length > 0 && (
+                      <ul className="space-y-2 mt-4 pt-4 border-t border-slate-100 text-xs text-slate-700">
+                        {featuresList.map((f: string, fIdx: number) => (
+                          <li key={fIdx} className="flex items-center gap-2">
+                            <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3] flex-shrink-0" />
+                            <span className="font-medium">{f.trim()}</span>
+                          </li>
+                        ))}
+                      </ul>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500">{proj.short_description || 'No description provided.'}</p>
-                  <div className="flex items-center gap-2 text-[11px] text-gray-400">
-                    <Badge variant="pink">{proj.category}</Badge>
-                    {proj.client_name && <span>Client: {proj.client_name}</span>}
+
+                  {/* Actions Footer */}
+                  <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <Badge variant={plan.is_published ? 'emerald' : 'outline'}>
+                        {plan.is_published ? 'Live' : 'Draft'}
+                      </Badge>
+                      {plan.is_featured && <Badge variant="pink">Best Value</Badge>}
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(plan)}
+                        className="text-slate-700 hover:text-[#e6005c] hover:border-pink-300 flex items-center gap-1 text-xs cursor-pointer"
+                        title="Edit Plan"
+                      >
+                        <Pencil className="w-3 h-3" />
+                        <span>Edit</span>
+                      </Button>
+
+                      <form action={async () => { await deleteProduct(plan.id); }}>
+                        <Button
+                          type="submit"
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 cursor-pointer"
+                          title="Delete Plan"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </form>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(proj)}
-                    className="text-slate-700 hover:text-[#e6005c] hover:border-pink-300 flex items-center gap-1 text-xs"
-                    title="Edit Project"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                    <span>Edit</span>
-                  </Button>
-
-                  <form action={async () => { await deleteProject(proj.id); }}>
-                    <Button
-                      type="submit"
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      title="Delete Project"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
-                  </form>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </Card>
+
     </div>
   );
 }

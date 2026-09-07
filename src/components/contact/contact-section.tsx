@@ -99,13 +99,13 @@ export function ContactSection({ settings, offices }: ContactSectionProps) {
 
                 <a
                   href={`tel:${phone.replace(/\s+/g, '')}`}
-                  className="flex items-center gap-3 px-4 py-3 bg-pink-50 border border-pink-200 rounded-2xl text-xs font-bold text-pink-900 hover:bg-pink-100 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 bg-teal-50 border border-teal-200 rounded-2xl text-xs font-bold text-teal-900 hover:bg-teal-100 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-pink-500 text-white flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center">
                     <PhoneCall className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-[10px] text-pink-700 uppercase font-semibold">Call Us</div>
+                    <div className="text-[10px] text-teal-700 uppercase font-semibold">Call Us</div>
                     <div>{phone}</div>
                   </div>
                 </a>
@@ -133,28 +133,28 @@ export function ContactSection({ settings, offices }: ContactSectionProps) {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Full Name <span className="text-pink-500">*</span>
+                      Full Name <span className="text-emerald-600">*</span>
                     </label>
                     <input
                       type="text"
                       name="client_name"
                       required
                       placeholder="Your name"
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1">
-                        Email Address <span className="text-pink-500">*</span>
+                        Email Address <span className="text-emerald-600">*</span>
                       </label>
                       <input
                         type="email"
                         name="client_email"
                         required
                         placeholder="you@example.com"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                       />
                     </div>
                     <div>
@@ -165,19 +165,19 @@ export function ContactSection({ settings, offices }: ContactSectionProps) {
                         type="tel"
                         name="client_phone"
                         placeholder="+91 98765 43210"
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      What do you need? <span className="text-pink-500">*</span>
+                      What do you need? <span className="text-emerald-600">*</span>
                     </label>
                     <select
                       name="project_type"
                       required
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-white"
                     >
                       <option value="">Select a service</option>
                       <option value="E-Commerce Development">E-Commerce Development</option>
@@ -191,24 +191,24 @@ export function ContactSection({ settings, offices }: ContactSectionProps) {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Message <span className="text-pink-500">*</span>
+                      Message <span className="text-emerald-600">*</span>
                     </label>
                     <textarea
                       name="project_brief"
                       rows={3}
                       required
                       placeholder="Tell us about your project..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
 
                   {status && (
                     <div
                       className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
-                        status.success ? 'bg-emerald-100 text-emerald-800' : 'bg-pink-100 text-pink-800'
+                        status.success ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {status.success ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-pink-600" />}
+                      {status.success ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
                       <span>{status.message}</span>
                     </div>
                   )}
@@ -238,12 +238,12 @@ export function ContactSection({ settings, offices }: ContactSectionProps) {
                     {officesToRender.map((off, idx) => (
                       <div key={idx} className="bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
                         <div className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-1">
-                          <MapPin className="w-4 h-4 text-pink-500" />
+                          <MapPin className="w-4 h-4 text-emerald-600" />
                           <span>{off.name}</span>
                         </div>
                         <div className="text-xs text-gray-600 pl-6 space-y-0.5">
                           {off.phone && <div>{off.phone}</div>}
-                          {off.email && <div className="text-pink-600 font-medium">{off.email}</div>}
+                          {off.email && <div className="text-emerald-700 font-medium">{off.email}</div>}
                         </div>
                       </div>
                     ))}

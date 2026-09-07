@@ -4,10 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowLeft, ShieldCheck, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 interface AdminLoginFormProps {
   redirectTo?: string;
@@ -17,6 +16,7 @@ export function AdminLoginForm({ redirectTo = '/admin' }: AdminLoginFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,8 +39,7 @@ export function AdminLoginForm({ redirectTo = '/admin' }: AdminLoginFormProps) {
       }
 
       if (data.session) {
-        router.push(redirectTo);
-        router.refresh();
+        window.location.href = redirectTo;
       }
     } catch {
       setError('An error occurred during authentication. Please try again.');
@@ -49,69 +48,114 @@ export function AdminLoginForm({ redirectTo = '/admin' }: AdminLoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b1e13] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        
-        <div className="text-center mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition-colors mb-4 px-3.5 py-1.5 rounded-full bg-white/5 border border-emerald-800/60 hover:bg-white/10"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Homepage</span>
-          </Link>
-          <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-lg shadow-emerald-950/40 mb-3">
-            <Image
-              src="/unique-fortune-logo.png"
-              alt="Unique Fortune Logo"
-              width={64}
-              height={64}
-              className="w-14 h-14 object-contain"
-              priority
-            />
-          </div>
-          <h1 className="text-2xl font-extrabold text-white mt-2 tracking-tight">
-            Unique Fortune <span className="text-[#e6005c]">Traders</span>
-          </h1>
-          <p className="text-xs text-emerald-300 mt-1">Admin CMS &amp; Staff Authentication Portal</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#eaf8f1] via-[#f3fbf6] to-[#ffffff] relative flex flex-col justify-between p-4 sm:p-6 lg:p-10 overflow-hidden">
+      
+      {/* Background Ambient Glows */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-200/40 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-pink-200/30 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-teal-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        <Card className="bg-white p-8 rounded-3xl border border-emerald-900/50 shadow-2xl space-y-6">
-          <form onSubmit={handleLogin} className="space-y-4">
+      {/* Top Header Navigation */}
+      <div className="max-w-6xl w-full mx-auto flex items-center justify-between z-10 pb-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#e6005c] transition-colors px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-emerald-200/60 shadow-xs hover:border-pink-300"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Return to Website</span>
+        </Link>
+
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>256-Bit Encrypted Portal</span>
+        </div>
+      </div>
+
+      {/* Center Form Card */}
+      <div className="w-full max-w-lg mx-auto my-auto z-10 py-6">
+        <div className="bg-white/95 backdrop-blur-xl rounded-[32px] border border-emerald-100 shadow-2xl shadow-emerald-950/5 p-6 sm:p-10 md:p-12 relative">
+          
+          {/* Brand Header */}
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center justify-center gap-3 mb-4 group">
+              <Image
+                src="/unique-fortune-logo.png"
+                alt="Unique Fortune Logo"
+                width={56}
+                height={56}
+                className="h-12 w-auto object-contain group-hover:scale-105 transition-transform"
+                priority
+              />
+              <div className="flex flex-col text-left leading-tight">
+                <span className="text-xl font-black tracking-tight text-amber-700 leading-none" style={{ fontFamily: 'Georgia, serif' }}>
+                  Unique Fortune
+                </span>
+                <span className="text-[11px] font-bold tracking-[0.16em] text-amber-500 uppercase mt-1">
+                  Traders
+                </span>
+              </div>
+            </Link>
+
+
+
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Welcome Back
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1.5 font-normal">
+              Sign in with your staff credentials to manage content &amp; leads
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">Email Address</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Admin Email Address <span className="text-[#e6005c]">*</span>
+              </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@uniquefortune.com"
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#e6005c] focus:ring-1 focus:ring-[#e6005c]"
+                  className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all bg-slate-50/50 hover:bg-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">Password</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold text-slate-700">
+                  Password <span className="text-[#e6005c]">*</span>
+                </label>
+              </div>
               <div className="relative">
-                <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#e6005c] focus:ring-1 focus:ring-[#e6005c]"
+                  className="w-full pl-11 pr-11 py-3 rounded-2xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all bg-slate-50/50 hover:bg-white"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors p-0.5"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
             {error && (
-              <div className="p-3 bg-pink-50 border border-pink-200 rounded-xl text-xs text-pink-700 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-pink-500 flex-shrink-0" />
-                <span>{error}</span>
+              <div className="p-3.5 bg-red-50/90 border border-red-200 rounded-2xl text-xs text-red-700 flex items-start gap-2.5 animate-in fade-in duration-200">
+                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                <span className="font-medium">{error}</span>
               </div>
             )}
 
@@ -120,24 +164,31 @@ export function AdminLoginForm({ redirectTo = '/admin' }: AdminLoginFormProps) {
               disabled={loading}
               variant="primary"
               size="lg"
-              className="w-full mt-2 bg-[#e6005c] hover:bg-[#cc0052] text-white"
+              className="w-full py-3.5 mt-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold rounded-2xl shadow-lg shadow-emerald-700/20 border-0 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
             >
-              {loading ? 'Authenticating...' : 'Sign In to Admin CMS'}
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <span>Authenticating Admin...</span>
+                </>
+              ) : (
+                <span>Sign In to Admin Dashboard</span>
+              )}
             </Button>
           </form>
-        </Card>
 
-        {/* Link to User/Client Login & Signup */}
-        <div className="text-center mt-6">
-          <Link
-            href="/login"
-            className="text-xs text-emerald-300 hover:text-white transition-colors font-medium underline underline-offset-4"
-          >
-            Looking for Client Portal / New User Sign Up? Click here
-          </Link>
+
+
         </div>
-
       </div>
+
+      {/* Bottom Footer Credits */}
+      <div className="max-w-6xl w-full mx-auto text-center z-10 pt-4">
+        <p className="text-xs text-slate-400 font-medium">
+          © {new Date().getFullYear()} Unique Fortune Traders. Protected by Enterprise Authentication.
+        </p>
+      </div>
+
     </div>
   );
 }

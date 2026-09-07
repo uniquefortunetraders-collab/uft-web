@@ -22,7 +22,7 @@ export function SectionHeading({
     const parts = title.split(new RegExp(`(${highlightText})`, "gi"));
     return parts.map((part, index) =>
       part.toLowerCase() === highlightText.toLowerCase() ? (
-        <span key={index} className="bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400 bg-clip-text text-transparent font-extrabold">
+        <span key={index} className="text-[#e6005c] font-extrabold">
           {part}
         </span>
       ) : (

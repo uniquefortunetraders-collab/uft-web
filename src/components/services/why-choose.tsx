@@ -24,25 +24,25 @@ export function WhyChoose({ data }: WhyChooseProps) {
     },
     {
       icon: ShieldCheck,
-      iconBg: 'bg-emerald-100 text-emerald-600',
+      iconBg: 'bg-emerald-100 text-emerald-700',
       title: '100% Secure & Compliant',
       description: 'Enterprise-grade security and data protection',
     },
     {
       icon: Layers,
-      iconBg: 'bg-orange-100 text-orange-600',
+      iconBg: 'bg-amber-100 text-amber-700',
       title: 'Custom-Built Solutions',
       description: 'Tailored specifically to your business needs',
     },
     {
       icon: Headphones,
-      iconBg: 'bg-purple-100 text-purple-600',
+      iconBg: 'bg-purple-100 text-purple-700',
       title: '24/7 Dedicated Support',
       description: 'Round-the-clock expert technical assistance',
     },
     {
       icon: TrendingUp,
-      iconBg: 'bg-teal-100 text-teal-600',
+      iconBg: 'bg-teal-100 text-teal-700',
       title: 'Proven Track Record',
       description: 'Trusted by 1000+ businesses across India',
     },
@@ -52,7 +52,7 @@ export function WhyChoose({ data }: WhyChooseProps) {
     data?.benefits && data.benefits.length >= 5
       ? data.benefits.map((b, idx) => ({
           icon: defaultPropositions[idx]?.icon || Sparkles,
-          iconBg: defaultPropositions[idx]?.iconBg || 'bg-pink-100 text-[#e6005c]',
+          iconBg: defaultPropositions[idx]?.iconBg || 'bg-emerald-100 text-emerald-700',
           title: b.title,
           description: b.description,
         }))
@@ -61,7 +61,7 @@ export function WhyChoose({ data }: WhyChooseProps) {
   return (
     <section className="py-4 sm:py-6 pb-8 sm:pb-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-50/70 rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-gray-200/80 shadow-xs">
+        <div className="bg-gradient-to-r from-emerald-50/50 via-slate-50/70 to-teal-50/40 rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-emerald-100/90 shadow-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-6">
             {itemsToRender.map((item, index) => {
               const IconComponent = item.icon;

@@ -37,7 +37,7 @@ export default function AboutPage() {
 
           <Reveal direction="up" delay={0.1}>
             <Card className="p-8 bg-white border border-emerald-100 rounded-2xl h-full space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-pink-100 text-pink-700 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
                 <Lightbulb className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-gray-900">Our Vision</h3>
@@ -66,7 +66,7 @@ export default function AboutPage() {
             </Card>
 
             <Card className="p-6 bg-white border border-gray-100 rounded-xl space-y-3">
-              <Trophy className="w-6 h-6 text-pink-600" />
+              <Trophy className="w-6 h-6 text-teal-600" />
               <h4 className="font-bold text-sm text-gray-900">1200+ Projects Delivered</h4>
               <p className="text-xs text-gray-500">Proven track record of high-concurrency platforms and zero-downtime migrations.</p>
             </Card>

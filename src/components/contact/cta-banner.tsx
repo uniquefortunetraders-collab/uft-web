@@ -18,7 +18,11 @@ export function CtaBanner({
     <section className="py-8 pb-14 sm:py-10 sm:pb-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal direction="up">
-          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-pink-100/70 via-rose-50/90 to-pink-100/60 border border-pink-200/70 p-5 sm:p-8 md:p-12 shadow-sm">
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-pink-100/80 via-rose-50/90 to-pink-100/70 border border-pink-200/80 p-5 sm:p-8 md:p-12 shadow-sm">
+            
+            {/* Soft glowing ambient lighting */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-pink-300/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-10 w-60 h-60 bg-emerald-200/20 rounded-full blur-2xl pointer-events-none" />
 
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8 relative z-10">
               {/* Left Copy */}

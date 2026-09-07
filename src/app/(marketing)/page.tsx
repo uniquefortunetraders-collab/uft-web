@@ -7,6 +7,7 @@ import { TrustStats } from '@/components/stats/trust-stats';
 import { FeaturedWork } from '@/components/projects/featured-work';
 import { ProcessSteps } from '@/components/process/process-steps';
 import { TestimonialsSection } from '@/components/testimonials/testimonials-section';
+import { PricingPlans } from '@/components/pricing/pricing-plans';
 import { CtaBanner } from '@/components/contact/cta-banner';
 
 export const revalidate = 60; // Revalidate dynamic content every 60 seconds
@@ -67,25 +68,28 @@ export default async function HomePage() {
       {/* 2. Technologies We Work With */}
       <TechStrip />
 
-      {/* 3. Our Core Solutions */}
+      {/* 3. Choose Your Plan (Products & Software Plans) */}
+      <PricingPlans products={projects} whatsapp={settings?.whatsapp || undefined} />
+
+      {/* 4. Our Core Solutions */}
       <TechnologyEcosystem services={services} />
 
-      {/* 4. 5 Value Propositions Banner */}
+      {/* 5. 5 Value Propositions Banner */}
       <WhyChoose data={homepageConfig?.why_choose} />
 
-      {/* 5. Building Trust Through Results (Dark Banner) */}
+      {/* 6. Building Trust Through Results (Dark Banner) */}
       <TrustStats stats={homepageConfig?.stats} />
 
-      {/* 6. Our Work Speaks - Solutions We've Built / Blogs */}
+      {/* 7. Our Work Speaks - Solutions We've Built / Blogs */}
       <FeaturedWork blogs={blogs} projects={projects} />
 
-      {/* 7. Our Process - Proven Approach */}
+      {/* 8. Our Process - Proven Approach */}
       <ProcessSteps data={homepageConfig?.process} />
 
-      {/* 8. Clients Love Us - Testimonials */}
+      {/* 9. Clients Love Us - Testimonials */}
       <TestimonialsSection testimonials={testimonials} />
 
-      {/* 9. Bottom CTA Banner */}
+      {/* 10. Bottom CTA Banner */}
       <CtaBanner
         whatsapp={settings?.whatsapp || undefined}
         phone={settings?.phone || undefined}

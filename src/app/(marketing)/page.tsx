@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server';
 import { Hero } from '@/components/hero/hero';
 import { TechStrip } from '@/components/tech/tech-strip';
 import { TechnologyEcosystem } from '@/components/services/technology-ecosystem';
-import { WhyChoose } from '@/components/services/why-choose';
 import { TrustStats } from '@/components/stats/trust-stats';
 import { FeaturedWork } from '@/components/projects/featured-work';
 import { ProcessSteps } from '@/components/process/process-steps';
@@ -74,14 +73,11 @@ export default async function HomePage() {
       {/* 4. Our Core Solutions */}
       <TechnologyEcosystem services={services} />
 
-      {/* 5. 5 Value Propositions Banner */}
-      <WhyChoose data={homepageConfig?.why_choose} />
-
-      {/* 6. Building Trust Through Results (Dark Banner) */}
+      {/* 5. Building Trust Through Results (Dark Banner) */}
       <TrustStats stats={homepageConfig?.stats} />
 
-      {/* 7. Our Work Speaks - Solutions We've Built / Blogs */}
-      <FeaturedWork blogs={blogs} projects={projects} />
+      {/* 6. Latest Blogs & Insights */}
+      <FeaturedWork blogs={blogs} />
 
       {/* 8. Our Process - Proven Approach */}
       <ProcessSteps data={homepageConfig?.process} />

@@ -1,20 +1,34 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Check, Boxes } from 'lucide-react';
-import { Reveal } from '@/components/animations/reveal';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check, Boxes, Sparkles } from 'lucide-react';
 import { Service } from '@/types/database';
 
 interface TechnologyEcosystemProps {
   services?: Service[];
 }
 
-const DEFAULT_ECOSYSTEM_SERVICES = [
+interface ProcessedService {
+  id: string;
+  title: string;
+  slug: string;
+  category_badge: string;
+  description: string;
+  features: string[];
+  cta_label: string;
+  cta_color: 'emerald' | 'rose' | 'amber';
+  thumbnail_url: string;
+}
+
+const DEFAULT_ECOSYSTEM_SERVICES: ProcessedService[] = [
   {
     id: 'e-commerce',
     title: 'E-Commerce Development',
     slug: 'e-commerce-development',
+    category_badge: 'E-Commerce & Digital Stores',
     description:
       'Build powerful, scalable and secure online stores with modern features that enhance customer experience and boost sales.',
     features: [
@@ -24,7 +38,7 @@ const DEFAULT_ECOSYSTEM_SERVICES = [
       'AI-based Recommendations',
       'Mobile Responsive Design',
     ],
-    cta_label: 'Explore E-Commerce',
+    cta_label: 'Get Free Consultation',
     cta_color: 'emerald',
     thumbnail_url: '/services/ecommerce-showcase.jpg',
   },
@@ -32,6 +46,7 @@ const DEFAULT_ECOSYSTEM_SERVICES = [
     id: 'stock-market',
     title: 'Stock Market Software Solutions',
     slug: 'stock-market-software',
+    category_badge: 'Fintech & Trading Engines',
     description:
       'Advanced trading tools and market intelligence systems for traders, brokers and market educators.',
     features: [
@@ -41,7 +56,7 @@ const DEFAULT_ECOSYSTEM_SERVICES = [
       'Charting & Technical Analysis',
       'Trading Signal Generators',
     ],
-    cta_label: 'Explore Market Solutions',
+    cta_label: 'Get Free Consultation',
     cta_color: 'rose',
     thumbnail_url: '/services/stockmarket-showcase.jpg',
   },
@@ -49,6 +64,7 @@ const DEFAULT_ECOSYSTEM_SERVICES = [
     id: 'erp-solutions',
     title: 'ERP Solutions for Enterprises',
     slug: 'erp-solutions',
+    category_badge: 'Enterprise Operations',
     description:
       'Unify your business operations with our feature-rich ERP software built for companies of all sizes.',
     features: [
@@ -58,8 +74,8 @@ const DEFAULT_ECOSYSTEM_SERVICES = [
       'Customizable Modules',
       'Scalable for SMEs & Enterprises',
     ],
-    cta_label: 'Explore ERP Solutions',
-    cta_color: 'emerald',
+    cta_label: 'Get Free Consultation',
+    cta_color: 'amber',
     thumbnail_url: '/services/erp-showcase.jpg',
   },
 ];
@@ -75,48 +91,93 @@ const DEFAULT_FALLBACK_FEATURES = [
 export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
   const hasDbServices = services && services.length > 0;
 
-  // Use CMS services if available, otherwise fall back to default rich showcases
-  const solutionsToRender = hasDbServices
-    ? services.slice(0, 3).map((s, idx) => ({
-        id: s.id,
-        title: s.title,
-        slug: s.slug,
-        description:
-          s.short_description ||
-          s.description ||
-          DEFAULT_ECOSYSTEM_SERVICES[idx % DEFAULT_ECOSYSTEM_SERVICES.length]?.description ||
-          'Build powerful, scalable and secure digital solutions with modern features that enhance customer experience.',
-        thumbnail_url:
-          s.thumbnail_url ||
-          DEFAULT_ECOSYSTEM_SERVICES[idx % DEFAULT_ECOSYSTEM_SERVICES.length]?.thumbnail_url,
-        features:
-          s.features && (s.features as any[]).length > 0
-            ? (s.features as any[]).map((f: any) =>
-                typeof f === 'string' ? f : f.title || f.name || String(f)
-              )
-            : DEFAULT_ECOSYSTEM_SERVICES[idx % DEFAULT_ECOSYSTEM_SERVICES.length]?.features ||
-              DEFAULT_FALLBACK_FEATURES,
-        cta_label:
-          s.cta_label ||
-          DEFAULT_ECOSYSTEM_SERVICES[idx % DEFAULT_ECOSYSTEM_SERVICES.length]?.cta_label ||
-          `Explore ${s.title.split(' ')[0]}`,
-        cta_color:
-          (DEFAULT_ECOSYSTEM_SERVICES[idx % DEFAULT_ECOSYSTEM_SERVICES.length]
-            ?.cta_color as 'emerald' | 'rose') || (idx === 1 ? 'rose' : 'emerald'),
-      }))
+  // Map incoming backend services to structured card data
+  const solutionsToRender: ProcessedService[] = hasDbServices
+    ? services.map((s, idx) => {
+        const fallback = DEFAULT_ECOSYSTEM_SERVICES[idx % DEFAULT_ECOSYSTEM_SERVICES.length];
+        
+        let parsedFeatures: string[] = [];
+        if (Array.isArray(s.features) && s.features.length > 0) {
+          parsedFeatures = s.features.map((f: any) =>
+            typeof f === 'string' ? f : f?.title || f?.name || String(f)
+          );
+        } else {
+          parsedFeatures = fallback?.features || DEFAULT_FALLBACK_FEATURES;
+        }
+
+        const colorCycle: ('emerald' | 'rose' | 'amber')[] = ['emerald', 'rose', 'amber'];
+        const ctaColor = colorCycle[idx % colorCycle.length];
+
+        const badges = [
+          'E-Commerce & Digital Stores',
+          'Fintech & Trading Engines',
+          'Enterprise Operations',
+          'Intelligent Automation',
+        ];
+
+        return {
+          id: s.id || `service-${idx}`,
+          title: s.title,
+          slug: s.slug,
+          category_badge: badges[idx % badges.length],
+          description:
+            s.short_description ||
+            s.description ||
+            fallback?.description ||
+            'Build powerful, scalable and secure digital solutions with modern features that enhance customer experience.',
+          thumbnail_url: s.thumbnail_url || fallback?.thumbnail_url || '/services/ecommerce-showcase.jpg',
+          features: parsedFeatures,
+          cta_label: s.cta_label || 'Get Free Consultation',
+          cta_color: ctaColor,
+        };
+      })
     : DEFAULT_ECOSYSTEM_SERVICES;
 
+  // Theme presets
+  const themeMap = {
+    emerald: {
+      badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+      titleHover: 'group-hover:text-emerald-700',
+      checkBg: 'bg-emerald-600',
+      btnClass: 'border-emerald-300 bg-emerald-50/90 hover:bg-emerald-100 text-emerald-800',
+      btnIcon: 'text-emerald-700',
+    },
+    rose: {
+      badgeBg: 'bg-pink-50 text-[#e6005c] border-pink-200',
+      titleHover: 'group-hover:text-[#e6005c]',
+      checkBg: 'bg-[#e6005c]',
+      btnClass: 'border-pink-300 bg-[#fff0f5] hover:bg-[#ffe6ef] text-[#e6005c]',
+      btnIcon: 'text-[#e6005c]',
+    },
+    amber: {
+      badgeBg: 'bg-amber-50 text-amber-900 border-amber-200',
+      titleHover: 'group-hover:text-amber-700',
+      checkBg: 'bg-amber-500',
+      btnClass: 'border-amber-300 bg-amber-50/90 hover:bg-amber-100 text-amber-900',
+      btnIcon: 'text-amber-700',
+    },
+  };
+
   return (
-    <section className="py-16 md:py-24 bg-white relative">
+    <section className="pt-12 pb-10 sm:pt-16 sm:pb-14 md:pt-20 md:pb-16 bg-[#f8fafc] relative">
+      {/* Background ambient lighting */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-emerald-100/40 via-pink-100/20 to-transparent blur-3xl pointer-events-none -z-10" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <Reveal direction="up">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#e6005c] block mb-2">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100/80 border border-emerald-300/70 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-3">
+              <Boxes className="w-3.5 h-3.5 text-emerald-700" />
               OUR CORE SOLUTIONS
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
               Complete Technology Solutions <br className="hidden sm:inline" />
               for Modern Businesses <span className="text-[#e6005c]">.</span>
             </h2>
@@ -124,224 +185,118 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
               From digital commerce to enterprise systems and market technology – we build solutions
               that solve real problems and create real impact.
             </p>
-          </Reveal>
+          </motion.div>
         </div>
 
-        {/* Solutions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {solutionsToRender.map((solution, index) => {
-            // Dynamic colorful themes mixing emerald green, hot pink, and warm gold
-            const colorThemes = [
-              {
-                hoverTitle: 'group-hover:text-emerald-700',
-                checkBg: 'bg-emerald-600',
-                btnClass: 'border-emerald-300/90 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-800',
-                btnIcon: 'text-emerald-700',
-              },
-              {
-                hoverTitle: 'group-hover:text-[#e6005c]',
-                checkBg: 'bg-[#e6005c]',
-                btnClass: 'border-pink-300/90 bg-[#fff0f5] hover:bg-[#ffe6ef] text-[#e6005c]',
-                btnIcon: 'text-[#e6005c]',
-              },
-              {
-                hoverTitle: 'group-hover:text-amber-700',
-                checkBg: 'bg-amber-500',
-                btnClass: 'border-amber-300/90 bg-amber-50/80 hover:bg-amber-100 text-amber-900',
-                btnIcon: 'text-amber-700',
-              },
-            ];
-            const theme = colorThemes[index % colorThemes.length];
+        {/* Shared Single-Container Stacking Cards Track */}
+        <div className="relative w-full pb-2 sm:pb-4">
+          {solutionsToRender.map((service, index) => {
+            const theme = themeMap[service.cta_color] || themeMap.emerald;
+            const isLast = index === solutionsToRender.length - 1;
 
             return (
-              <Reveal key={solution.id || solution.slug || index} direction="up" delay={index * 0.1}>
-                <div className="h-full flex flex-col bg-white rounded-[28px] border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-emerald-200 transition-all duration-300 overflow-hidden group">
+              <div
+                key={service.id || index}
+                id={`service-card-${service.id}`}
+                className={`sticky w-full ${isLast ? 'mb-0' : 'mb-[25vh] sm:mb-[32vh] md:mb-[40vh]'}`}
+                style={{
+                  top: `calc(4.5rem + ${index * 12}px)`,
+                  zIndex: 10 + index,
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-20px' }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full bg-white rounded-2xl sm:rounded-3xl md:rounded-[36px] border border-slate-200/90 shadow-2xl shadow-slate-300/50 p-5 sm:p-7 md:p-10 overflow-hidden group transition-all duration-300"
+                >
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center">
 
-                  {/* Top Showcase Area - Image Fills 100% of the header */}
-                  <div className="h-60 sm:h-64 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center">
-                    {solution.thumbnail_url ? (
-                      <Image
-                        src={solution.thumbnail_url}
-                        alt={solution.title}
-                        fill
-                        unoptimized
-                        priority={index === 0}
-                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center p-4">
-                        <DeviceShowcaseMockup title={solution.title} />
-                      </div>
-                    )}
-                  </div>
+                    {/* Content Column: Title, Description, Features, CTA */}
+                    <div className="lg:col-span-6 flex flex-col justify-between space-y-4 sm:space-y-6 text-left order-2 lg:order-1">
+                      <div>
+                        {/* Category Tag Badge */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3 shadow-2xs">
+                          <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-700" />
+                          <span className="text-slate-800">{service.category_badge}</span>
+                        </div>
 
-                  {/* Card Body */}
-                  <div className="p-7 sm:p-8 flex-1 flex flex-col justify-between">
-                    <div>
-                      {/* Title */}
-                      <h3 className={`text-2xl font-black text-slate-900 mb-3 tracking-tight leading-snug transition-colors ${theme.hoverTitle}`}>
-                        {solution.title}
-                      </h3>
+                        {/* Service Title */}
+                        <h3 className={`text-xl sm:text-2xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight transition-colors ${theme.titleHover}`}>
+                          {service.title}
+                        </h3>
 
-                      {/* Description */}
-                      {solution.description && (
-                        <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed mb-6 font-normal">
-                          {solution.description}
-                        </p>
-                      )}
+                        {/* Short Description */}
+                        {service.description && (
+                          <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                            {service.description}
+                          </p>
+                        )}
 
-                      {/* Feature Points List with Color-coded Circle Checkmarks */}
-                      {solution.features && solution.features.length > 0 && (
-                        <ul className="space-y-3 mb-8">
-                          {solution.features.map((feature: string, fIdx: number) => (
-                            <li
-                              key={fIdx}
-                              className="flex items-center gap-2.5 text-xs sm:text-[13px] text-slate-700 font-medium"
-                            >
-                              <div
-                                className={`w-4 h-4 rounded-full text-white flex items-center justify-center flex-shrink-0 shadow-2xs ${theme.checkBg}`}
+                        {/* Feature Points with Colored Checkmarks */}
+                        {service.features && service.features.length > 0 && (
+                          <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+                            {service.features.map((feature, fIdx) => (
+                              <li
+                                key={fIdx}
+                                className="flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm text-slate-700 font-medium"
                               >
-                                <Check className="w-2.5 h-2.5 stroke-[3.5]" />
-                              </div>
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                                <div
+                                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full text-white flex items-center justify-center flex-shrink-0 shadow-2xs ${theme.checkBg}`}
+                                >
+                                  <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 stroke-[3.5]" />
+                                </div>
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      {/* CTA Button */}
+                      <div className="pt-1 sm:pt-2">
+                        <Link
+                          href={`/solutions/${service.slug}`}
+                          className={`inline-flex items-center justify-between gap-3 sm:gap-4 py-2.5 px-5 sm:py-3 sm:px-7 rounded-full border text-xs sm:text-sm font-bold transition-all duration-200 group/btn shadow-xs hover:shadow-md cursor-pointer ${theme.btnClass}`}
+                        >
+                          <span>{service.cta_label}</span>
+                          <ArrowRight
+                            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover/btn:translate-x-1 ${theme.btnIcon}`}
+                          />
+                        </Link>
+                      </div>
                     </div>
 
-                    {/* Call to Action Button */}
-                    <div className="mt-auto pt-2">
-                      <Link
-                        href={`/solutions/${solution.slug}`}
-                        className={`w-full py-3.5 px-6 rounded-full border text-xs sm:text-sm font-bold flex items-center justify-between transition-all duration-200 group/btn shadow-2xs ${theme.btnClass}`}
-                      >
-                        <span>{solution.cta_label}</span>
-                        <ArrowRight
-                          className={`w-4 h-4 transition-transform group-hover/btn:translate-x-1 ${theme.btnIcon}`}
-                        />
-                      </Link>
+                    {/* Image Column */}
+                    <div className="lg:col-span-6 w-full flex items-center justify-center order-1 lg:order-2">
+                      <div className="relative w-full h-44 sm:h-64 md:h-80 lg:h-96 rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-inner group/img">
+                        {service.thumbnail_url ? (
+                          <Image
+                            src={service.thumbnail_url}
+                            alt={service.title}
+                            fill
+                            unoptimized
+                            className="object-cover w-full h-full group-hover/img:scale-105 transition-transform duration-700 ease-out"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                            priority={index === 0}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400 text-sm">
+                            {service.title}
+                          </div>
+                        )}
+                      </div>
                     </div>
+
                   </div>
-
-                </div>
-              </Reveal>
+                </motion.div>
+              </div>
             );
           })}
         </div>
 
       </div>
     </section>
-  );
-}
-
-/**
- * Realistic Laptop & Mobile Device Showcase Mockup
- * Matches the reference image's mint background with central laptop and front phone
- */
-function DeviceShowcaseMockup({ title }: { title: string }) {
-  return (
-    <div className="relative w-full h-full flex items-center justify-center select-none pointer-events-none">
-      {/* Background radial glow */}
-      <div className="absolute w-44 h-44 rounded-full bg-emerald-300/20 blur-2xl" />
-
-      <div className="relative flex items-center justify-center w-full max-w-[280px] h-full">
-        {/* Central Laptop Mockup */}
-        <div className="relative z-10 w-48 sm:w-52 bg-slate-900 rounded-t-xl pt-1.5 px-1.5 pb-0 shadow-2xl border border-slate-700/70">
-          {/* Laptop Top Bezel & Camera */}
-          <div className="flex items-center justify-between px-2 py-0.5 bg-slate-800/90 rounded-t-md mb-1">
-            <div className="flex gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 inline-block" />
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-            </div>
-            <div className="w-14 h-1 bg-slate-700 rounded-full" />
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-          </div>
-
-          {/* Laptop Screen Viewport */}
-          <div className="bg-[#0c1613] rounded-b-sm p-2 text-white space-y-1.5 h-26 overflow-hidden">
-            {/* Store / App Banner */}
-            <div className="h-9 bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 rounded p-1.5 flex items-center justify-between border border-emerald-900/40">
-              <div className="space-y-0.5 min-w-0 flex-1">
-                <div className="text-[7.5px] font-black text-emerald-400 truncate">
-                  {title}
-                </div>
-                <div className="text-[5.5px] text-slate-400">Enterprise Digital Store</div>
-              </div>
-              <div className="w-4 h-4 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-[7px] text-emerald-300 font-bold ml-1 flex-shrink-0">
-                ✓
-              </div>
-            </div>
-
-            {/* Catalog Grid Cards */}
-            <div className="grid grid-cols-3 gap-1 pt-0.5">
-              <div className="h-11 bg-slate-800/90 rounded border border-slate-700/60 p-1 flex flex-col justify-between">
-                <div className="w-full h-4 bg-emerald-900/40 rounded" />
-                <div className="w-7 h-1 bg-slate-500 rounded-full" />
-                <div className="w-4 h-1 bg-emerald-400 rounded-full" />
-              </div>
-              <div className="h-11 bg-slate-800/90 rounded border border-slate-700/60 p-1 flex flex-col justify-between">
-                <div className="w-full h-4 bg-emerald-900/40 rounded" />
-                <div className="w-7 h-1 bg-slate-500 rounded-full" />
-                <div className="w-4 h-1 bg-emerald-400 rounded-full" />
-              </div>
-              <div className="h-11 bg-slate-800/90 rounded border border-slate-700/60 p-1 flex flex-col justify-between">
-                <div className="w-full h-4 bg-emerald-900/40 rounded" />
-                <div className="w-7 h-1 bg-slate-500 rounded-full" />
-                <div className="w-4 h-1 bg-emerald-400 rounded-full" />
-              </div>
-            </div>
-          </div>
-
-          {/* Laptop Aluminum Base */}
-          <div className="w-56 -ml-4 h-2 bg-gradient-to-b from-slate-400 to-slate-600 rounded-b-lg shadow-lg border-t border-slate-300" />
-        </div>
-
-        {/* Smartphone Mockup (Front Left) */}
-        <div className="absolute -left-1 bottom-3 z-20 w-22 bg-white rounded-2xl p-1 shadow-2xl border border-slate-200 transform -rotate-2">
-          {/* Speaker ear piece */}
-          <div className="w-5 h-1 bg-slate-300 rounded-full mx-auto mb-1" />
-          <div className="bg-slate-50 rounded-xl p-1.5 space-y-1">
-            <div className="flex items-center justify-between">
-              <div className="w-3.5 h-3.5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[7px] text-emerald-600 font-bold">
-                ●
-              </div>
-              <div className="text-[6px] font-bold text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded-full">
-                Active
-              </div>
-            </div>
-            <div className="w-12 h-1 bg-slate-800 rounded-full mt-0.5" />
-            <div className="w-8 h-1 bg-slate-300 rounded-full" />
-            <div className="h-5 bg-emerald-100/70 rounded-md border border-emerald-200 flex items-center justify-center text-[7px] font-black text-emerald-800">
-              $48,920
-            </div>
-            <div className="space-y-0.5 pt-0.5">
-              <div className="flex justify-between items-center text-[5.5px] text-slate-500 font-semibold">
-                <span>Growth</span>
-                <span className="text-emerald-600 font-bold">+24.8%</span>
-              </div>
-              <div className="w-full bg-slate-200 h-1 rounded-full overflow-hidden">
-                <div className="bg-emerald-500 h-full w-4/5" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Secondary Tablet Screen (Back Right) */}
-        <div className="absolute right-0 top-6 z-0 w-20 bg-slate-800 rounded-xl p-1 shadow-lg border border-slate-700 transform rotate-4">
-          <div className="bg-slate-900 rounded-lg p-1 space-y-1">
-            <div className="w-10 h-1 bg-slate-600 rounded-full" />
-            <div className="grid grid-cols-2 gap-0.5">
-              <div className="h-5 bg-emerald-950/90 rounded border border-emerald-800/40" />
-              <div className="h-5 bg-slate-800 rounded border border-slate-700" />
-              <div className="h-5 bg-slate-800 rounded border border-slate-700" />
-              <div className="h-5 bg-emerald-950/90 rounded border border-emerald-800/40" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }

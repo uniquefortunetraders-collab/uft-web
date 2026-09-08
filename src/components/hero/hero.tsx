@@ -49,8 +49,8 @@ export function Hero({ content }: HeroProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           
-          {/* Left Column: Copy & CTAs */}
-          <div className="lg:col-span-6 space-y-6 text-left">
+          {/* Left Column: Copy & CTAs (Order 2 on mobile, Order 1 on Desktop) */}
+          <div className="order-2 lg:order-1 lg:col-span-6 space-y-5 sm:space-y-6 text-left">
             <Reveal direction="up" delay={0.1}>
               
               {/* Eyebrow Pill Badge */}
@@ -109,17 +109,17 @@ export function Hero({ content }: HeroProps) {
             </Reveal>
           </div>
 
-          {/* Right Column: Hero Graphic Image */}
-          <div className="block lg:col-span-6 relative mt-8 lg:mt-0 w-full flex items-center justify-center">
+          {/* Right Column: Hero Graphic Image (Order 1 on mobile, Order 2 on Desktop) */}
+          <div className="order-1 lg:order-2 block lg:col-span-6 relative mt-2 lg:mt-0 w-full flex items-center justify-center">
             <Reveal direction="left" delay={0.2} className="w-full">
-              <div className="relative mx-auto max-w-lg lg:max-w-none flex items-center justify-center">
+              <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none flex items-center justify-center">
                 <Image
                   src={heroImageUrl}
                   alt="Algo Trading Platform & Intelligent Automation"
                   width={650}
                   height={480}
                   priority
-                  className="w-full h-auto max-h-[480px] lg:max-h-[520px] object-contain"
+                  className="w-full h-auto max-h-[360px] sm:max-h-[440px] lg:max-h-[520px] object-contain"
                 />
               </div>
             </Reveal>

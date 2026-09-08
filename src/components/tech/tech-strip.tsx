@@ -122,7 +122,7 @@ const TECHS_MARQUEE = [...TECHS, ...TECHS];
 
 export function TechStrip() {
   return (
-    <section className="relative py-4 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#ccefdc] to-white">
+    <section className="relative py-4 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#ccefdc] to-white overflow-hidden w-full max-w-full">
 
       {/* Mobile-only label — sits ABOVE the card, outside border */}
       <p className="sm:hidden text-[10px] font-bold tracking-[0.18em] uppercase text-gray-400 text-center mb-2">

@@ -84,7 +84,7 @@ export function TestimonialsSection({ testimonials, title, subtitle }: Testimoni
     : DEFAULT_TESTIMONIALS;
 
   return (
-    <section className="pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-16 md:pb-24 bg-white relative overflow-hidden">
+    <section className="pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-16 md:pb-24 bg-white relative overflow-hidden w-full max-w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header with Navigation Controls */}

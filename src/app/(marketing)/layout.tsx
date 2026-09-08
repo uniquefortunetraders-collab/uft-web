@@ -17,12 +17,12 @@ export default async function MarketingLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f1f8f3]">
+    <div className="min-h-screen flex flex-col bg-[#f1f8f3] overflow-x-hidden w-full max-w-full">
       <Header
         companyName={settings?.company_name || 'Unique Fortune Traders'}
         whatsapp={settings?.whatsapp || undefined}
       />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow overflow-x-hidden w-full max-w-full">{children}</main>
       <Footer
         companyName={settings?.company_name || 'Unique Fortune Traders'}
         tagline={settings?.tagline || 'Technology for a Smarter Tomorrow'}

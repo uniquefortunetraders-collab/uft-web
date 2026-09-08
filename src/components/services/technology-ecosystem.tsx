@@ -159,7 +159,7 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
   };
 
   return (
-    <section className="pt-12 pb-10 sm:pt-16 sm:pb-14 md:pt-20 md:pb-16 bg-[#f8fafc] relative">
+    <section className="pt-12 pb-10 sm:pt-16 sm:pb-14 md:pt-20 md:pb-16 bg-[#f8fafc] relative overflow-hidden w-full max-w-full">
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-emerald-100/40 via-pink-100/20 to-transparent blur-3xl pointer-events-none -z-10" />
 

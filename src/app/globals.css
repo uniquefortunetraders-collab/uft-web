@@ -25,11 +25,25 @@
   }
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
 body {
   background-color: #ffffff;
   color: var(--text-primary);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow-x: clip;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+  position: relative;
+}
+
+/* Ensure child elements respect container bounds */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 /* Custom scrollbar */

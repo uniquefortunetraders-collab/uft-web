@@ -25,7 +25,7 @@ export function TrustStats({ stats }: TrustStatsProps) {
   const itemsToRender = stats && stats.length > 0 ? stats : defaultStats;
 
   return (
-    <section className="py-6 sm:py-8 pb-12 sm:pb-16 bg-white">
+    <section className="py-6 sm:py-8 pb-12 sm:pb-16 bg-white relative overflow-hidden w-full max-w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal direction="up">
           <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#0b1329] border border-slate-800 text-white p-4 sm:p-8 md:p-10 shadow-2xl shadow-slate-900/20">

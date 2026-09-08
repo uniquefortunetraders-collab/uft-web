@@ -93,7 +93,7 @@ export function FeaturedWork({ blogs = [] }: FeaturedWorkProps) {
   }, [isPaused, totalItems, handleNext]);
 
   return (
-    <section id="blog" className="py-16 md:py-24 bg-white relative scroll-mt-20 overflow-hidden">
+    <section id="blog" className="py-16 md:py-24 bg-white relative scroll-mt-20 overflow-hidden w-full max-w-full">
       <div id="insights" className="absolute -top-24" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

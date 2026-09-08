@@ -120,7 +120,7 @@ export function PricingPlans({
   ];
 
   return (
-    <section id="pricing" className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-[#eaf8f1] via-[#f1faf5] to-white relative overflow-hidden">
+    <section id="pricing" className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-[#eaf8f1] via-[#f1faf5] to-white relative overflow-hidden w-full max-w-full">
       
       {/* Dynamic Luminous Ambient Halo Glows */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-200/35 rounded-full blur-3xl pointer-events-none -z-10" />

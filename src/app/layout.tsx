@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -13,6 +13,12 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "UniqueAI — Technology for a Smarter Tomorrow",
@@ -33,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jakarta.variable} scroll-smooth`}>
-      <body className="min-h-screen flex flex-col font-sans bg-[#f1f8f3] text-gray-900 antialiased selection:bg-pink-500 selection:text-white">
+    <html lang="en" className={`${inter.variable} ${jakarta.variable} scroll-smooth overflow-x-hidden max-w-full w-full`}>
+      <body className="min-h-screen flex flex-col font-sans bg-[#f1f8f3] text-gray-900 antialiased selection:bg-pink-500 selection:text-white overflow-x-hidden max-w-full w-full">
         {children}
       </body>
     </html>

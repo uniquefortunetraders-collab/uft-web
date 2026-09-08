@@ -15,7 +15,7 @@ export function CtaBanner({
   const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
 
   return (
-    <section className="py-8 pb-14 sm:py-10 sm:pb-20 bg-white">
+    <section className="py-8 pb-14 sm:py-10 sm:pb-20 bg-white relative overflow-hidden w-full max-w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal direction="up">
           <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-pink-100/80 via-rose-50/90 to-pink-100/70 border border-pink-200/80 p-5 sm:p-8 md:p-12 shadow-sm">

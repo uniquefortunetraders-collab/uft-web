@@ -40,7 +40,7 @@ export function Hero({ content }: HeroProps) {
   ];
 
   return (
-    <section className="relative pt-6 pb-16 md:pt-12 md:pb-24 overflow-hidden bg-gradient-to-b from-[#eaf8f1] via-[#ddf4e8] to-[#ccefdc]">
+    <section className="relative pt-6 pb-16 md:pt-12 md:pb-24 overflow-hidden bg-gradient-to-b from-[#eaf8f1] via-[#ddf4e8] to-[#ccefdc] w-full max-w-full">
       {/* Soft luminous ambient glows matching the reference */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-200/35 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-teal-200/35 rounded-full blur-3xl pointer-events-none -z-10" />

@@ -40,7 +40,7 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
     );
 
   return (
-    <header className="sticky top-0 z-50 bg-[#eaf8f1]/95 backdrop-blur-md border-b border-emerald-200/50 transition-all">
+    <header className="sticky top-0 z-50 bg-[#eaf8f1]/95 backdrop-blur-md border-b border-emerald-200/50 transition-all w-full max-w-full overflow-x-clip">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           

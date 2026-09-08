@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Quote, Star, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -56,10 +56,11 @@ const DEFAULT_TESTIMONIALS = [
 
 export function TestimonialsSection({ testimonials, title, subtitle }: TestimonialsSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 340;
+      const scrollAmount = 300;
       scrollContainerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -82,6 +83,25 @@ export function TestimonialsSection({ testimonials, title, subtitle }: Testimoni
         content: t.content,
       }))
     : DEFAULT_TESTIMONIALS;
+
+  // Auto-scroll loop on mobile (advances testimonials every 3.5 seconds, pauses on hover/touch)
+  useEffect(() => {
+    if (isPaused || itemsToRender.length <= 1) return;
+    const interval = setInterval(() => {
+      if (!scrollContainerRef.current) return;
+      const container = scrollContainerRef.current;
+      const cardWidth = 300;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+
+      if (container.scrollLeft >= maxScroll - 10) {
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      }
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isPaused, itemsToRender.length]);
 
   return (
     <section className="pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-16 md:pb-24 bg-white relative overflow-hidden w-full max-w-full">
@@ -139,9 +159,13 @@ export function TestimonialsSection({ testimonials, title, subtitle }: Testimoni
           </div>
         </div>
 
-        {/* Mobile/Tablet View (< lg): Parallel Vertical Portrait Cards that Scroll Side to Side */}
+        {/* Mobile/Tablet View (< lg): Parallel Vertical Portrait Cards that Scroll Side to Side with Auto-Move & Hover-Pause */}
         <div
           ref={scrollContainerRef}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
           className="flex lg:hidden items-stretch overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >

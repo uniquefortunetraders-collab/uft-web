@@ -188,8 +188,92 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
           </motion.div>
         </div>
 
-        {/* Shared Single-Container Stacking Cards Track */}
-        <div className="relative w-full pb-2 sm:pb-4">
+        {/* Mobile View (< lg): Infinite Continuous Horizontal Marquee Along X-Axis (Pauses on Hover / Touch) */}
+        <div className="block lg:hidden relative w-full overflow-hidden py-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-[#f8fafc] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-[#f8fafc] to-transparent z-10 pointer-events-none" />
+
+          <div className="flex items-stretch gap-4 sm:gap-6 animate-solution-marquee w-max py-2">
+            {[...solutionsToRender, ...solutionsToRender].map((service, index) => {
+              const theme = themeMap[service.cta_color] || themeMap.emerald;
+
+              return (
+                <div
+                  key={`${service.id}-${index}`}
+                  className="w-[84vw] sm:w-[380px] flex-shrink-0 bg-white rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 p-5 sm:p-6 flex flex-col justify-between group transition-all duration-300"
+                >
+                  {/* Top Image */}
+                  <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-inner mb-4">
+                    {service.thumbnail_url ? (
+                      <Image
+                        src={service.thumbnail_url}
+                        alt={service.title}
+                        fill
+                        unoptimized
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 85vw, 400px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400 text-sm">
+                        {service.title}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Badge & Title */}
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
+                      <Sparkles className="w-3 h-3 text-slate-700" />
+                      <span className="text-slate-800">{service.category_badge}</span>
+                    </div>
+
+                    <h3 className={`text-xl font-black text-slate-900 tracking-tight leading-snug transition-colors ${theme.titleHover}`}>
+                      {service.title}
+                    </h3>
+
+                    {service.description && (
+                      <p className="mt-2 text-xs text-slate-600 leading-relaxed line-clamp-3">
+                        {service.description}
+                      </p>
+                    )}
+
+                    {/* Features list */}
+                    {service.features && service.features.length > 0 && (
+                      <ul className="mt-3.5 space-y-1.5 pt-3 border-t border-slate-100">
+                        {service.features.slice(0, 4).map((feature, fIdx) => (
+                          <li
+                            key={fIdx}
+                            className="flex items-center gap-2 text-xs text-slate-700 font-medium truncate"
+                          >
+                            <div className={`w-3.5 h-3.5 rounded-full text-white flex items-center justify-center flex-shrink-0 shadow-2xs ${theme.checkBg}`}>
+                              <Check className="w-2 h-2 stroke-[3.5]" />
+                            </div>
+                            <span className="truncate">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  {/* CTA */}
+                  <div className="pt-4 mt-4 border-t border-slate-100">
+                    <Link
+                      href={`/solutions/${service.slug}`}
+                      className={`w-full inline-flex items-center justify-between gap-3 py-2.5 px-5 rounded-full border text-xs font-bold transition-all duration-200 group/btn shadow-xs hover:shadow-md cursor-pointer ${theme.btnClass}`}
+                    >
+                      <span>{service.cta_label}</span>
+                      <ArrowRight className={`w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1 ${theme.btnIcon}`} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Desktop View (lg+): Shared Single-Container Stacking Cards Track */}
+        <div className="hidden lg:block relative w-full pb-2 sm:pb-4">
           {solutionsToRender.map((service, index) => {
             const theme = themeMap[service.cta_color] || themeMap.emerald;
             const isLast = index === solutionsToRender.length - 1;
@@ -198,7 +282,7 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
               <div
                 key={service.id || index}
                 id={`service-card-${service.id}`}
-                className={`sticky w-full ${isLast ? 'mb-0' : 'mb-[25vh] sm:mb-[32vh] md:mb-[40vh]'}`}
+                className={`sticky w-full ${isLast ? 'mb-0' : 'mb-6 sm:mb-8 md:mb-10'}`}
                 style={{
                   top: `calc(4.5rem + ${index * 12}px)`,
                   zIndex: 10 + index,
@@ -297,6 +381,24 @@ export function TechnologyEcosystem({ services }: TechnologyEcosystemProps) {
         </div>
 
       </div>
+
+      <style jsx>{`
+        @keyframes solution-marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-solution-marquee {
+          animation: solution-marquee 24s linear infinite;
+        }
+        .animate-solution-marquee:hover,
+        .animate-solution-marquee:active {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 }

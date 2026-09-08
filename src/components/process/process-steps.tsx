@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Search, FileText, Code2, Rocket, Headphones, ChevronRight, ChevronLeft, ArrowRight } from 'lucide-react';
 import { Reveal } from '@/components/animations/reveal';
 
@@ -18,10 +18,11 @@ interface ProcessStepsProps {
 
 export function ProcessSteps({ data }: ProcessStepsProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = 200;
       scrollContainerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -78,6 +79,25 @@ export function ProcessSteps({ data }: ProcessStepsProps) {
         }))
       : defaultSteps;
 
+  // Auto-scroll loop on mobile (advances steps every 2.5 seconds, pauses on hover/touch)
+  useEffect(() => {
+    if (isPaused || stepsToRender.length <= 1) return;
+    const interval = setInterval(() => {
+      if (!scrollContainerRef.current) return;
+      const container = scrollContainerRef.current;
+      const cardWidth = 185;
+      const maxScroll = container.scrollWidth - container.clientWidth;
+
+      if (container.scrollLeft >= maxScroll - 10) {
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      }
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [isPaused, stepsToRender.length]);
+
   return (
     <section className="py-8 md:py-10 bg-white relative overflow-hidden w-full max-w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,14 +116,18 @@ export function ProcessSteps({ data }: ProcessStepsProps) {
 
           {/* Mobile Swipe Hint */}
           <div className="flex md:hidden items-center gap-1 text-xs text-slate-400 font-medium pb-1">
-            <span>Swipe</span>
+            <span>Auto / Swipe</span>
             <ArrowRight className="w-3.5 h-3.5 text-[#e6005c]" />
           </div>
         </div>
 
-        {/* Mobile View (< md): Parallel Clean Steps Matching Desktop Icon Style */}
+        {/* Mobile View (< md): Parallel Clean Steps Matching Desktop Icon Style with Auto-Move & Hover-Pause */}
         <div
           ref={scrollContainerRef}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
           className="flex md:hidden items-center overflow-x-auto gap-2 pb-4 pt-1 snap-x snap-mandatory scroll-smooth -mx-4 px-4"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >

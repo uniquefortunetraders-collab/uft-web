@@ -230,8 +230,8 @@ export function Footer({
               >
                 <ul className="space-y-2.5 text-xs text-slate-500 font-medium pb-2 md:pb-0">
                   <li>
-                    <Link href="/#blog" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Blog
+                    <Link href="/blogs" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                      Blog & Insights
                     </Link>
                   </li>
                   <li>
@@ -240,7 +240,7 @@ export function Footer({
                     </Link>
                   </li>
                   <li>
-                    <Link href="/insights" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                    <Link href="/blogs" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
                       Documentation
                     </Link>
                   </li>

@@ -83,7 +83,7 @@ export function AdminShell({
     { section: 'Content Systems' },
     { href: '/admin/services', label: 'Services & Solutions', icon: Boxes },
     { href: '/admin/projects', label: 'Products & Plans', icon: Briefcase },
-    { href: '/admin/insights', label: 'Blog & Insights', icon: FileText },
+    { href: '/admin/blogs', label: 'Blogs', icon: FileText },
     { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
     { section: 'Leads & Management' },
     { href: '/admin/inquiries', label: 'Project Inquiries', icon: Inbox, accent: true },
@@ -95,7 +95,7 @@ export function AdminShell({
     if (pathname === '/admin') return 'Overview';
     if (pathname.startsWith('/admin/services')) return 'Services & Solutions';
     if (pathname.startsWith('/admin/projects') || pathname.startsWith('/admin/products')) return 'Products & Pricing Plans';
-    if (pathname.startsWith('/admin/insights')) return 'Blog & Insights';
+    if (pathname.startsWith('/admin/blogs') || pathname.startsWith('/admin/insights')) return 'Blogs';
     if (pathname.startsWith('/admin/testimonials')) return 'Testimonials';
     if (pathname.startsWith('/admin/inquiries')) return 'Project Inquiries';
     if (pathname.startsWith('/admin/offices')) return 'Office Locations';

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { calculateReadingTime } from '@/lib/utils';
 
 export async function upsertBlogPost(formData: FormData): Promise<void> {
   const supabase = await createClient();
@@ -14,7 +15,13 @@ export async function upsertBlogPost(formData: FormData): Promise<void> {
   const content = formData.get('content') as string;
   const author_name = formData.get('author_name') as string || 'UniqueAI Team';
   const featured_image_url = formData.get('featured_image_url') as string || null;
-  const reading_time = parseInt((formData.get('reading_time') as string) || '5', 10);
+  
+  const rawReadingTime = formData.get('reading_time') as string | null;
+  const calculatedReadingTime = calculateReadingTime(content, excerpt);
+  const reading_time = rawReadingTime && rawReadingTime.trim() !== ''
+    ? parseInt(rawReadingTime, 10)
+    : calculatedReadingTime;
+
   const status = (formData.get('status') as string) || 'published';
 
   const payload = {
@@ -36,7 +43,9 @@ export async function upsertBlogPost(formData: FormData): Promise<void> {
     await supabase.from('blog_posts').insert([payload]);
   }
 
+  revalidatePath('/blogs');
   revalidatePath('/insights');
+  revalidatePath('/admin/blogs');
   revalidatePath('/admin/insights');
   revalidatePath('/');
 }
@@ -45,7 +54,9 @@ export async function deleteBlogPost(id: string): Promise<void> {
   const supabase = await createClient();
   await supabase.from('blog_posts').delete().eq('id', id);
 
+  revalidatePath('/blogs');
   revalidatePath('/insights');
+  revalidatePath('/admin/blogs');
   revalidatePath('/admin/insights');
   revalidatePath('/');
 }

@@ -32,7 +32,7 @@ export function FeaturedWork({ blogs = [] }: FeaturedWorkProps) {
     short_description: b.excerpt || (b.content ? b.content.slice(0, 120).replace(/<[^>]*>?/gm, '') + '...' : ''),
     thumbnail_url: b.featured_image_url || null,
     slug: b.slug,
-    link: `/insights/${b.slug}`,
+    link: `/blogs/${b.slug}`,
     published_at: b.published_at
       ? new Date(b.published_at).toLocaleDateString('en-GB', {
           day: 'numeric',
@@ -136,7 +136,7 @@ export function FeaturedWork({ blogs = [] }: FeaturedWorkProps) {
               )}
 
               <Link
-                href="/insights"
+                href="/blogs"
                 className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#e6005c] hover:text-[#cc0052] bg-pink-50 hover:bg-pink-100/80 border border-pink-200/80 px-5 py-2.5 rounded-full transition-all duration-200 shadow-2xs group"
               >
                 <span>View All Blogs</span>
@@ -265,7 +265,7 @@ export function FeaturedWork({ blogs = [] }: FeaturedWorkProps) {
             {/* Mobile Bottom Bar: View All Blogs Button */}
             <div className="flex sm:hidden flex-col items-center mt-6">
               <Link
-                href="/insights"
+                href="/blogs"
                 className="w-full inline-flex items-center justify-center gap-2 text-xs font-bold text-[#e6005c] hover:text-[#cc0052] bg-pink-50 hover:bg-pink-100/80 border border-pink-200/80 px-6 py-3 rounded-full transition-all duration-200 shadow-2xs"
               >
                 <span>View All Blogs</span>

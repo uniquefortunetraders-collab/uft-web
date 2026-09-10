@@ -63,10 +63,10 @@ export function FeaturedInsights({ posts }: FeaturedInsightsProps) {
           </Reveal>
           <Reveal direction="left" delay={0.2}>
             <Link
-              href="/insights"
+              href="/blogs"
               className="inline-flex items-center gap-1.5 text-sm font-bold text-pink-600 hover:text-pink-700 transition-colors mt-4 md:mt-0"
             >
-              <span>View All Articles</span>
+              <span>View All Blogs</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Reveal>
@@ -133,7 +133,7 @@ export function FeaturedInsights({ posts }: FeaturedInsightsProps) {
                     </div>
 
                     <Link
-                      href={`/insights/${post.slug}`}
+                      href={`/blogs/${post.slug}`}
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 transition-colors mt-auto pt-2"
                     >
                       <span>Read More</span>

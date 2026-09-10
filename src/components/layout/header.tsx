@@ -130,6 +130,10 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
               Products
             </Link>
 
+            <Link href="/blogs" className={getLinkClasses('/blogs')}>
+              Blogs
+            </Link>
+
             <Link href="/contact" className={getLinkClasses('/contact')}>
               Contact
             </Link>
@@ -192,6 +196,13 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
             className={getMobileLinkClasses('/work')}
           >
             Products
+          </Link>
+          <Link
+            href="/blogs"
+            onClick={() => setMobileMenuOpen(false)}
+            className={getMobileLinkClasses('/blogs')}
+          >
+            Blogs
           </Link>
           <Link
             href="/contact"

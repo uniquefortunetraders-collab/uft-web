@@ -58,13 +58,13 @@ export default async function AdminDashboardPage() {
       badgeColor: 'bg-blue-100 text-blue-800',
     },
     {
-      title: 'Blog Articles',
+      title: 'Blogs',
       count: stats.postsCount,
-      href: '/admin/insights',
-      linkLabel: 'Manage Insights',
+      href: '/admin/blogs',
+      linkLabel: 'Manage Blogs',
       icon: FileText,
       iconBg: 'bg-amber-50 text-amber-600 border border-amber-200/80',
-      badge: 'Articles',
+      badge: 'Blogs',
       badgeColor: 'bg-amber-100 text-amber-800',
     },
     {
@@ -239,12 +239,12 @@ export default async function AdminDashboardPage() {
               </Link>
 
               <Link
-                href="/admin/insights"
+                href="/admin/blogs"
                 className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-amber-50 text-slate-700 hover:text-amber-800 transition-colors group"
               >
                 <div className="flex items-center gap-2.5">
                   <FileText className="w-4 h-4 text-amber-600" />
-                  <span>Publish Blog Articles</span>
+                  <span>Publish Blogs</span>
                 </div>
                 <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-amber-700" />
               </Link>

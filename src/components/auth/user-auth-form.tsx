@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Lock, Mail, User, AlertCircle, ArrowLeft, CheckCircle2, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
+import { Lock, Mail, User, Phone, AlertCircle, ArrowLeft, CheckCircle2, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
 
 interface UserAuthFormProps {
   defaultMode?: 'login' | 'signup';
@@ -15,13 +15,15 @@ interface UserAuthFormProps {
 export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialMode = searchParams.get('mode') === 'signup' ? 'signup' : defaultMode;
+  const modeParam = searchParams.get('mode') || searchParams.get('tab');
+  const initialMode = modeParam === 'signup' ? 'signup' : defaultMode;
 
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -33,6 +35,11 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
+
+    // Clear any legacy client rate limit timestamps
+    try {
+      localStorage.removeItem('uft_signup_attempts');
+    } catch {}
 
     const supabase = createClient();
 
@@ -47,6 +54,11 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
         setLoading(false);
         return;
       }
+      if (!phone.trim()) {
+        setError('Mobile number is required.');
+        setLoading(false);
+        return;
+      }
 
       try {
         const { data, error: signUpError } = await supabase.auth.signUp({
@@ -55,25 +67,60 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
           options: {
             data: {
               full_name: fullName.trim(),
+              phone: phone.trim(),
+              mobile_number: phone.trim(),
             },
           },
         });
 
         if (signUpError) {
-          setError(signUpError.message);
+          if (signUpError.message.toLowerCase().includes('rate limit')) {
+            setError(
+              'Supabase Email Rate Limit Exceeded: Supabase limits confirmation emails to 3 per hour. To fix this permanently: Go to Supabase Dashboard -> Authentication -> Providers -> Email and turn OFF "Confirm Email".'
+            );
+          } else {
+            setError(signUpError.message);
+          }
           setLoading(false);
           return;
         }
 
         if (data.user) {
+          // Sync profile to public.profiles table if it exists
+          try {
+            await supabase.from('profiles').upsert({
+              id: data.user.id,
+              email: email.trim(),
+              full_name: fullName.trim(),
+              phone: phone.trim(),
+              updated_at: new Date().toISOString(),
+            });
+          } catch {
+            // Non-blocking if public.profiles is not created yet
+          }
+
           setSuccessMessage(
-            'Account created successfully! If verification is required, please check your inbox to confirm your email.'
+            'Account created successfully! Auto-signing in...'
           );
+
+          // Auto Sign-In & Instant Redirect
           if (data.session) {
-            setTimeout(() => {
-              router.push('/');
-              router.refresh();
-            }, 1500);
+            window.location.href = '/';
+          } else {
+            // Attempt auto login if session was not returned immediately
+            const { data: signInData } = await supabase.auth.signInWithPassword({
+              email: email.trim(),
+              password,
+            });
+
+            if (signInData?.session) {
+              window.location.href = '/';
+            } else {
+              setTimeout(() => {
+                router.push('/');
+                router.refresh();
+              }, 1200);
+            }
           }
         }
       } catch {
@@ -108,7 +155,7 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#eaf8f1] via-[#f3fbf6] to-[#ffffff] relative flex flex-col justify-between p-4 sm:p-6 lg:p-10 overflow-hidden">
-      
+
       {/* Background Ambient Glows */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-200/40 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-pink-200/30 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -135,7 +182,7 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
       {/* Center Form Card */}
       <div className="w-full max-w-lg mx-auto my-auto z-10 py-6">
         <div className="bg-white/95 backdrop-blur-xl rounded-[32px] border border-emerald-100 shadow-2xl shadow-emerald-950/5 p-6 sm:p-10 md:p-12 relative">
-          
+
           {/* Brand Header */}
           <div className="text-center mb-6">
             <Link href="/" className="inline-flex items-center justify-center gap-3 mb-4 group">
@@ -176,11 +223,10 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
                 setError(null);
                 setSuccessMessage(null);
               }}
-              className={`flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
-                mode === 'login'
+              className={`flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${mode === 'login'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-500 hover:text-slate-800'
-              }`}
+                }`}
             >
               Sign In
             </button>
@@ -191,35 +237,53 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
                 setError(null);
                 setSuccessMessage(null);
               }}
-              className={`flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
-                mode === 'signup'
+              className={`flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${mode === 'signup'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-500 hover:text-slate-800'
-              }`}
+                }`}
             >
               Create Account
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full Name field for Signup */}
+            {/* Full Name & Mobile Number fields for Signup */}
             {mode === 'signup' && (
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  Full Name <span className="text-[#e6005c]">*</span>
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="John Doe"
-                    className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all bg-slate-50/50 hover:bg-white"
-                  />
+              <>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Full Name <span className="text-[#e6005c]">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
+                    <input
+                      type="text"
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all bg-slate-50/50 hover:bg-white"
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Mobile Number <span className="text-[#e6005c]">*</span>
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
+                    <input
+                      type="tel"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+91 98765 43210"
+                      className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all bg-slate-50/50 hover:bg-white"
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             {/* Email field */}

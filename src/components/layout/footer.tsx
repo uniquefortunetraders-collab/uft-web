@@ -1,14 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, MapPin, Phone, MessageCircle, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
 
 interface FooterProps {
   companyName?: string;
   tagline?: string;
+}
+
+interface ServiceItem {
+  id: string;
+  title: string;
+  slug: string;
 }
 
 export function Footer({
@@ -21,6 +28,21 @@ export function Footer({
     resources: false,
     offices: false,
   });
+  const [services, setServices] = useState<ServiceItem[]>([]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from('services')
+      .select('id, title, slug')
+      .eq('is_published', true)
+      .order('display_order', { ascending: true })
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) {
+          setServices(data);
+        }
+      });
+  }, []);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({
@@ -121,31 +143,36 @@ export function Footer({
                 )}
               >
                 <ul className="space-y-2.5 text-xs text-slate-500 font-medium pb-2 md:pb-0">
-                  <li>
-                    <Link href="/solutions/e-commerce-development" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      E-Commerce Development
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/solutions/stock-market-software" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Stock Market Software
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/solutions/erp-solutions" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      ERP Solutions
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/solutions/ai-automation" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      AI & Automation
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/solutions/custom-software" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Custom Software
-                    </Link>
-                  </li>
+                  {services.length > 0 ? (
+                    services.map((service) => (
+                      <li key={service.id || service.slug}>
+                        <Link
+                          href={`/solutions/${service.slug}`}
+                          className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0"
+                        >
+                          {service.title}
+                        </Link>
+                      </li>
+                    ))
+                  ) : (
+                    <>
+                      <li>
+                        <Link href="/solutions/e-commerce-development" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                          E-Commerce Development
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/solutions/stock-market-software" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                          Stock Market Software
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/solutions/erp-solutions" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                          ERP Solutions
+                        </Link>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>
@@ -181,18 +208,13 @@ export function Footer({
                     </Link>
                   </li>
                   <li>
-                    <Link href="/about" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Our Team
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Careers
-                    </Link>
-                  </li>
-                  <li>
                     <Link href="/work" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Clients
+                      Our Products
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/testimonials" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                      Testimonials
                     </Link>
                   </li>
                   <li>
@@ -235,23 +257,13 @@ export function Footer({
                     </Link>
                   </li>
                   <li>
-                    <Link href="/#blog" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Case Studies
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/blogs" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Documentation
-                    </Link>
-                  </li>
-                  <li>
                     <Link href="/support" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Help Center
+                      Support & FAQ
                     </Link>
                   </li>
                   <li>
-                    <Link href="/privacy" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
-                      Privacy Policy
+                    <Link href="/contact" className="hover:text-[#e6005c] transition-colors block py-0.5 md:py-0">
+                      Inquiries
                     </Link>
                   </li>
                 </ul>

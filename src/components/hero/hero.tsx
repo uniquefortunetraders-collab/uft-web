@@ -5,11 +5,14 @@ import Image from 'next/image';
 import { ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/animations/reveal';
+import { HeroSection } from '@/types/database';
 
 interface HeroProps {
-  content?: {
+  content?: HeroSection | {
     eyebrow?: string;
     title?: string;
+    title_highlight?: string;
+    title_line3?: string;
     highlight_text?: string;
     description?: string;
     primary_cta_label?: string;
@@ -18,14 +21,18 @@ interface HeroProps {
     secondary_cta_url?: string;
     hero_image_url?: string;
     trust_labels?: string[];
-  };
+  } | null;
 }
 
 export function Hero({ content }: HeroProps) {
-  const eyebrow = content?.eyebrow || 'SEBI Compliant • Trusted by 1000+ Clients';
+  const eyebrow = content?.eyebrow || '1200+ Completed • Trusted by 1500+ Clients';
+  const titleLine1 = content?.title || 'Technology That';
+  const titleHighlight = (content as any)?.title_highlight || (content as any)?.highlight_text || 'Empowers Every';
+  const titleLine3 = (content as any)?.title_line3 || 'Business .';
+
   const description =
     content?.description ||
-    'UniqueAI delivers innovative software, intelligent automation and market technology that help businesses grow, operate efficiently and stay ahead in a digital world.';
+    'UniqueAI delivers innovative software, intelligent automation and market technology that helps businesses grow, operate efficiently and stay ahead in a digital world.';
   const primaryLabel = content?.primary_cta_label || 'Explore Solutions';
   const primaryUrl = content?.primary_cta_url || '/solutions';
   const secondaryLabel = content?.secondary_cta_label || 'Talk to Our Experts';
@@ -41,7 +48,7 @@ export function Hero({ content }: HeroProps) {
 
   return (
     <section className="relative pt-6 pb-16 md:pt-12 md:pb-24 overflow-hidden bg-gradient-to-b from-[#eaf8f1] via-[#ddf4e8] to-[#ccefdc] w-full max-w-full">
-      {/* Soft luminous ambient glows matching the reference */}
+      {/* Soft luminous ambient glows */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-200/35 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-teal-200/35 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 right-10 w-[500px] h-[500px] bg-[#a7f3d0]/30 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -49,7 +56,7 @@ export function Hero({ content }: HeroProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           
-          {/* Left Column: Copy & CTAs (Order 2 on mobile, Order 1 on Desktop) */}
+          {/* Left Column: Copy & CTAs */}
           <div className="order-2 lg:order-1 lg:col-span-6 space-y-5 sm:space-y-6 text-left">
             <Reveal direction="up" delay={0.1}>
               
@@ -61,9 +68,9 @@ export function Hero({ content }: HeroProps) {
 
               {/* Main Heading */}
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.14] sm:leading-[1.08] font-sans">
-                Technology That <br />
-                Empowers <span className="text-[#e6005c]">Every</span> <br />
-                <span className="text-[#e6005c]">Business .</span>
+                {titleLine1} <br />
+                <span className="text-[#e6005c]">{titleHighlight}</span> <br />
+                <span className="text-[#e6005c]">{titleLine3}</span>
               </h1>
 
               {/* Subtitle */}
@@ -96,7 +103,7 @@ export function Hero({ content }: HeroProps) {
                 </Link>
               </div>
 
-              {/* Trust Checkmarks Row - Balanced 2x2 on Mobile, Flex Row on Desktop */}
+              {/* Trust Checkmarks Row */}
               <div className="pt-4 sm:pt-6 grid grid-cols-2 gap-x-4 gap-y-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 mt-2 sm:mt-4">
                 {trustLabels.map((label, index) => (
                   <div key={index} className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
@@ -109,7 +116,7 @@ export function Hero({ content }: HeroProps) {
             </Reveal>
           </div>
 
-          {/* Right Column: Hero Graphic Image (Order 1 on mobile, Order 2 on Desktop) */}
+          {/* Right Column: Hero Graphic Image */}
           <div className="order-1 lg:order-2 block lg:col-span-6 relative mt-2 lg:mt-0 w-full flex items-center justify-center">
             <Reveal direction="left" delay={0.2} className="w-full">
               <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none flex items-center justify-center">
@@ -130,4 +137,3 @@ export function Hero({ content }: HeroProps) {
     </section>
   );
 }
-

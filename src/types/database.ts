@@ -35,6 +35,24 @@ export interface SiteSettings {
   updated_at: string;
 }
 
+export interface HeroSection {
+  id: string;
+  eyebrow: string | null;
+  title: string;
+  title_highlight: string | null;
+  title_line3: string | null;
+  description: string | null;
+  primary_cta_label: string | null;
+  primary_cta_url: string | null;
+  secondary_cta_label: string | null;
+  secondary_cta_url: string | null;
+  hero_image_url: string | null;
+  trust_labels: string[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SocialLinks {
   facebook?: string;
   twitter?: string;

@@ -46,11 +46,12 @@ export default async function ServiceDetailPage({
   }
 
   const features = (service.features as any[]) || [];
+  const imageUrl = service.featured_image_url || service.thumbnail_url || service.icon_url;
 
   return (
     <div className="pt-8 pb-20 bg-[#f1f8f3]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Back navigation */}
         <Link
           href="/#solutions"
@@ -62,33 +63,49 @@ export default async function ServiceDetailPage({
 
         {/* Hero Banner for Service */}
         <div className="bg-white rounded-3xl p-8 sm:p-12 border border-emerald-100 shadow-xl mb-12">
-          <Badge variant="emerald" className="mb-4">
-            Enterprise Vertical Solution
-          </Badge>
-          <h1 className="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight">
-            {service.title}
-          </h1>
-          <p className="mt-4 text-base sm:text-xl text-gray-600 leading-relaxed max-w-3xl font-normal">
-            {service.short_description}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link href="/contact">
-              <Button variant="primary" size="lg" className="gap-2">
-                <span>{service.cta_label || 'Request Solution Consultation'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <a href={`https://wa.me/?text=Inquiry%20regarding%20${encodeURIComponent(service.title)}`} target="_blank" rel="noreferrer">
-              <Button variant="outline" size="lg">
-                Talk on WhatsApp
-              </Button>
-            </a>
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <div className="flex-1">
+              <Badge variant="emerald" className="mb-4">
+                Enterprise Vertical Solution
+              </Badge>
+              <h1 className="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight">
+                {service.title}
+              </h1>
+              <p className="mt-4 text-base sm:text-xl text-gray-600 leading-relaxed max-w-3xl font-normal">
+                {service.short_description}
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link href="/contact">
+                  <Button variant="primary" size="lg" className="gap-2">
+                    <span>{service.cta_label || 'Request Solution Consultation'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <a href={`https://wa.me/?text=Inquiry%20regarding%20${encodeURIComponent(service.title)}`} target="_blank" rel="noreferrer">
+                  <Button variant="outline" size="lg">
+                    Talk on WhatsApp
+                  </Button>
+                </a>
+              </div>
+            </div>
+
+            {imageUrl && (
+              <div className="w-full lg:w-5/12 flex-shrink-0">
+                <div className="relative rounded-2xl overflow-hidden border border-emerald-100 shadow-lg bg-slate-900">
+                  <img
+                    src={imageUrl}
+                    alt={service.title}
+                    className="w-full h-64 sm:h-72 object-cover object-center hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Overview & Features Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           <div className="lg:col-span-8 space-y-8">
             <Reveal direction="up">
               <div className="bg-white rounded-3xl p-8 border border-emerald-100 shadow-sm space-y-4">
@@ -121,6 +138,7 @@ export default async function ServiceDetailPage({
                             <p className="text-xs text-gray-500 mt-0.5">{feat.description}</p>
                           )}
                         </div>
+
                       </div>
                     ))}
                   </div>

@@ -19,6 +19,7 @@ import {
   ExternalLink,
   ShieldCheck,
   User,
+  Sparkles,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { AdminLoginForm } from '@/components/admin/admin-login-form';
@@ -81,6 +82,7 @@ export function AdminShell({
   const navItems = [
     { href: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
     { section: 'Content Systems' },
+    { href: '/admin/hero', label: 'Hero Section CMS', icon: Sparkles },
     { href: '/admin/services', label: 'Services & Solutions', icon: Boxes },
     { href: '/admin/projects', label: 'Products & Plans', icon: Briefcase },
     { href: '/admin/blogs', label: 'Blogs', icon: FileText },
@@ -93,6 +95,7 @@ export function AdminShell({
 
   const getPageTitle = () => {
     if (pathname === '/admin') return 'Overview';
+    if (pathname.startsWith('/admin/hero')) return 'Hero Section CMS';
     if (pathname.startsWith('/admin/services')) return 'Services & Solutions';
     if (pathname.startsWith('/admin/projects') || pathname.startsWith('/admin/products')) return 'Products & Pricing Plans';
     if (pathname.startsWith('/admin/blogs') || pathname.startsWith('/admin/insights')) return 'Blogs';

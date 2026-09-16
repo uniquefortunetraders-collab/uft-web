@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "UniqueAI",
   },
+  icons: {
+    icon: [
+      { url: '/unique-fortune-logo.png' },
+      { url: '/favicon.ico' },
+    ],
+    shortcut: '/unique-fortune-logo.png',
+    apple: '/unique-fortune-logo.png',
+  },
 };
 
 export default function RootLayout({

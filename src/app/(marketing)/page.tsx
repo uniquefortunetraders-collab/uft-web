@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { getHeroSection } from '@/actions/hero';
 import { Hero } from '@/components/hero/hero';
 import { TechStrip } from '@/components/tech/tech-strip';
 import { TechnologyEcosystem } from '@/components/services/technology-ecosystem';
@@ -13,6 +14,7 @@ export const revalidate = 60; // Revalidate dynamic content every 60 seconds
 
 export default async function HomePage() {
   let settings = null;
+  let heroContent = null;
   let services = [];
   let projects = [];
   let blogs = [];
@@ -21,8 +23,9 @@ export default async function HomePage() {
   try {
     const supabase = await createClient();
 
-    const [settingsRes, servicesRes, projectsRes, blogsRes, testimonialsRes] =
+    const [heroData, settingsRes, servicesRes, projectsRes, blogsRes, testimonialsRes] =
       await Promise.all([
+        getHeroSection(),
         supabase.from('site_settings').select('*').single(),
         supabase
           .from('services')
@@ -48,6 +51,7 @@ export default async function HomePage() {
           .order('display_order', { ascending: true }),
       ]);
 
+    heroContent = heroData;
     settings = settingsRes.data;
     services = servicesRes.data || [];
     projects = projectsRes.data || [];
@@ -58,11 +62,12 @@ export default async function HomePage() {
   }
 
   const homepageConfig = settings?.homepage_config as any;
+  const finalHeroData = heroContent || homepageConfig?.hero;
 
   return (
     <>
       {/* 1. Hero */}
-      <Hero content={homepageConfig?.hero} />
+      <Hero content={finalHeroData} />
 
       {/* 2. Technologies We Work With */}
       <TechStrip />
@@ -93,4 +98,3 @@ export default async function HomePage() {
     </>
   );
 }
-

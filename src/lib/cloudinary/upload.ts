@@ -109,3 +109,86 @@ export function isCloudinaryConfigured(): boolean {
   if (cloudinaryUrl) return true;
   return Boolean(cloudName && ((apiKey && apiSecret) || uploadPreset));
 }
+
+/**
+ * Extracts public_id from a standard Cloudinary CDN URL.
+ */
+export function extractPublicIdFromUrl(url: string): string | null {
+  if (!url || !url.includes('res.cloudinary.com')) return null;
+  try {
+    const uploadIdx = url.indexOf('/upload/');
+    if (uploadIdx === -1) return null;
+    let path = url.substring(uploadIdx + 8);
+    path = path.replace(/^v\d+\//, '');
+    path = path.split('?')[0];
+    path = path.replace(/\.[^/.]+$/, '');
+    return path || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Deletes an image asset from Cloudinary using their REST destroy API.
+ */
+export async function deleteFromCloudinary(
+  publicIdOrUrl: string
+): Promise<{ success: boolean; result?: string }> {
+  let cloudName = (process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || '').trim();
+  let apiKey = (process.env.CLOUDINARY_API_KEY || '').trim();
+  let apiSecret = (process.env.CLOUDINARY_API_SECRET || '').trim();
+
+  const cloudinaryUrl = process.env.CLOUDINARY_URL;
+  if (cloudinaryUrl && (!cloudName || !apiKey || !apiSecret)) {
+    try {
+      const parsed = new URL(cloudinaryUrl);
+      apiKey = parsed.username || apiKey;
+      apiSecret = parsed.password || apiSecret;
+      cloudName = parsed.hostname || cloudName;
+    } catch {
+      // fallback
+    }
+  }
+
+  const publicId = publicIdOrUrl.includes('http')
+    ? extractPublicIdFromUrl(publicIdOrUrl)
+    : publicIdOrUrl;
+
+  if (!publicId) {
+    throw new Error('Invalid Cloudinary image URL or public_id.');
+  }
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error(
+      'Missing Cloudinary API Key or Secret. Set CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in .env.local'
+    );
+  }
+
+  const timestamp = Math.round(Date.now() / 1000);
+  const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}`;
+  const signature = crypto
+    .createHash('sha1')
+    .update(paramsToSign + apiSecret)
+    .digest('hex');
+
+  const formData = new FormData();
+  formData.append('public_id', publicId);
+  formData.append('api_key', apiKey);
+  formData.append('timestamp', timestamp.toString());
+  formData.append('signature', signature);
+
+  const endpoint = `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`;
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok || (data.result !== 'ok' && data.result !== 'not found')) {
+    throw new Error(data.error?.message || `Cloudinary delete failed: ${data.result}`);
+  }
+
+  return { success: true, result: data.result };
+}
+

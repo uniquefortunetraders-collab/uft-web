@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { updateSiteSettings } from '@/actions/settings';
-import { Settings, Globe, Shield, Phone, Mail } from 'lucide-react';
+import { Settings, Globe, Shield, Phone, Mail, QrCode } from 'lucide-react';
+import { ImageUpload } from '@/components/admin/image-upload';
 
 export default async function AdminSettingsPage() {
   let settings = null;
@@ -19,7 +20,7 @@ export default async function AdminSettingsPage() {
     <div className="space-y-8 max-w-5xl">
       <div>
         <h1 className="text-2xl font-black text-gray-900">Site Settings & Global SEO CMS</h1>
-        <p className="text-xs text-gray-500 mt-1">Manage global company metadata, contact information, social links, and SEO tags.</p>
+        <p className="text-xs text-gray-500 mt-1">Manage global company metadata, contact information, payment options, social links, and SEO tags.</p>
       </div>
 
       <Card className="p-6 bg-white border border-gray-200">
@@ -107,6 +108,37 @@ export default async function AdminSettingsPage() {
                   name="whatsapp"
                   defaultValue={settings?.whatsapp || '+919876543210'}
                   className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Payment & QR Code */}
+          <div className="space-y-4">
+            <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-2">
+              <QrCode className="w-4 h-4 text-emerald-600" /> Payment & QR Code Settings
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">UPI ID</label>
+                <input
+                  type="text"
+                  name="upi_id"
+                  defaultValue={settings?.upi_id || ''}
+                  placeholder="e.g. 9746738976@ptaxis"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+                <p className="text-[11px] text-gray-400 mt-1">This UPI ID is shown to clients in the Buy Now modal.</p>
+              </div>
+              <div>
+                <ImageUpload
+                  name="qr_code_url"
+                  label="QR Code Image"
+                  defaultValue={settings?.qr_code_url}
+                  aspectRatio="square"
+                  helperText="Upload payment QR code image (automatically uploaded to Cloudinary)."
+                  deleteFromCloudinaryOnRemove={true}
                 />
               </div>
             </div>

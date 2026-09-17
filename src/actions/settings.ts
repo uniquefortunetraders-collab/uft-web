@@ -13,6 +13,8 @@ export async function updateSiteSettings(formData: FormData): Promise<void> {
   const email = formData.get('email') as string || null;
   const phone = formData.get('phone') as string || null;
   const whatsapp = formData.get('whatsapp') as string || null;
+  const upi_id = formData.get('upi_id') as string || null;
+  const qr_code_url = formData.get('qr_code_url') as string || null;
   const seo_title = formData.get('seo_title') as string || null;
   const seo_description = formData.get('seo_description') as string || null;
 
@@ -31,6 +33,8 @@ export async function updateSiteSettings(formData: FormData): Promise<void> {
     email,
     phone,
     whatsapp,
+    upi_id,
+    qr_code_url,
     social_links,
     seo_title,
     seo_description,
@@ -45,6 +49,7 @@ export async function updateSiteSettings(formData: FormData): Promise<void> {
   }
 
   revalidatePath('/');
+  revalidatePath('/work');
   revalidatePath('/contact');
   revalidatePath('/admin/settings');
 }

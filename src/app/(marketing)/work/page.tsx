@@ -31,7 +31,9 @@ export default async function ProductsWorkPage() {
     <div className="pt-6 pb-12">
       <PricingPlans
         products={products}
-        whatsapp={settings?.whatsapp || undefined}
+        whatsapp={settings?.whatsapp ?? undefined}
+        upi_id={settings?.upi_id ?? undefined}
+        qr_code_url={settings?.qr_code_url ?? undefined}
       />
     </div>
   );

@@ -27,6 +27,8 @@ export interface SiteSettings {
   email: string | null;
   phone: string | null;
   whatsapp: string | null;
+  upi_id: string | null;
+  qr_code_url: string | null;
   social_links: SocialLinks;
   seo_title: string | null;
   seo_description: string | null;

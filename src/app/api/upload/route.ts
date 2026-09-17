@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadToCloudinary, isCloudinaryConfigured } from '@/lib/cloudinary/upload';
+import { uploadToCloudinary, deleteFromCloudinary, isCloudinaryConfigured } from '@/lib/cloudinary/upload';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -93,6 +93,53 @@ export async function POST(req: NextRequest) {
     console.error('Upload handler error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to process image upload' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { url } = body || {};
+
+    if (!url || typeof url !== 'string') {
+      return NextResponse.json({ error: 'Image URL is required for deletion.' }, { status: 400 });
+    }
+
+    // 1. Delete from Cloudinary if it's a Cloudinary URL
+    if (url.includes('res.cloudinary.com')) {
+      const res = await deleteFromCloudinary(url);
+      return NextResponse.json({
+        success: true,
+        message: 'Image successfully deleted from Cloudinary',
+        result: res.result,
+      });
+    }
+
+    // 2. Delete local file if it's stored in /uploads/
+    if (url.startsWith('/uploads/')) {
+      const filename = path.basename(url);
+      const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
+      try {
+        await fs.unlink(filePath);
+      } catch (err: any) {
+        // Ignore file not found
+      }
+      return NextResponse.json({
+        success: true,
+        message: 'Local file deleted successfully',
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Cleared image reference',
+    });
+  } catch (error: any) {
+    console.error('Delete image error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete image' },
       { status: 500 }
     );
   }

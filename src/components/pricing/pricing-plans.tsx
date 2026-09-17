@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -14,6 +15,10 @@ import {
   ShieldCheck,
   Flame,
   CheckCircle2,
+  X,
+  Copy,
+  QrCode,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/animations/reveal';
@@ -22,6 +27,8 @@ import { Project } from '@/types/database';
 interface PricingPlansProps {
   products?: Project[];
   whatsapp?: string;
+  upi_id?: string | null;
+  qr_code_url?: string | null;
 }
 
 const DEFAULT_PLANS = [
@@ -71,9 +78,34 @@ const DEFAULT_PLANS = [
 
 export function PricingPlans({
   products = [],
-  whatsapp = '+919447077076',
+  whatsapp = '',
+  upi_id,
+  qr_code_url,
 }: PricingPlansProps) {
+  const [selectedPlanForPayment, setSelectedPlanForPayment] = useState<any | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  // Lock background scrolling when modal is open
+  useEffect(() => {
+    if (selectedPlanForPayment) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedPlanForPayment]);
+
   const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
+  const formattedPhone =
+    cleanWhatsapp.length === 12 && cleanWhatsapp.startsWith('91')
+      ? `+91 ${cleanWhatsapp.slice(2, 7)} ${cleanWhatsapp.slice(7)}`
+      : cleanWhatsapp.length === 10
+      ? `+91 ${cleanWhatsapp.slice(0, 5)} ${cleanWhatsapp.slice(5)}`
+      : whatsapp;
+
+  const hasPaymentConfig = Boolean(upi_id && qr_code_url);
 
   const itemsToRender =
     products && products.length > 0
@@ -306,34 +338,43 @@ export function PricingPlans({
                     {/* Dual Action CTA Buttons */}
                     <div className="pt-6 mt-6 border-t border-slate-100 space-y-2.5">
                       <div className="flex flex-row items-center gap-2 sm:gap-2.5">
-                        {/* Buy Now Button (Hot Pink with Arrow - Single Line Guaranteed) */}
-                        <Link
-                          href={
-                            plan.live_url ||
-                            `/contact?plan=${encodeURIComponent(plan.title)}`
+                        {/* Buy Now Button (Hot Pink with Arrow - Triggers Payment QR Modal) */}
+                        <Button
+                          variant="primary"
+                          size="md"
+                          onClick={() =>
+                            setSelectedPlanForPayment({
+                              ...plan,
+                              priceDisplay,
+                              periodDisplay,
+                            })
                           }
-                          className="flex-1 min-w-0"
+                          className="flex-1 min-w-0 justify-center gap-1.5 bg-[#e6005c] hover:bg-[#cc0052] text-white font-bold rounded-full py-3 sm:py-3.5 px-3 sm:px-4 shadow-md shadow-pink-500/25 text-xs sm:text-[13px] tracking-tight whitespace-nowrap transition-all group cursor-pointer"
                         >
-                          <Button
-                            variant="primary"
-                            size="md"
-                            className="w-full justify-center gap-1.5 bg-[#e6005c] hover:bg-[#cc0052] text-white font-bold rounded-full py-3 sm:py-3.5 px-3 sm:px-4 shadow-md shadow-pink-500/25 text-xs sm:text-[13px] tracking-tight whitespace-nowrap transition-all group cursor-pointer"
-                          >
-                            <span className="whitespace-nowrap">Buy Now</span>
-                            <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                          </Button>
-                        </Link>
+                          <span className="whitespace-nowrap">Buy Now</span>
+                          <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                        </Button>
 
                         {/* WhatsApp Enquire Button */}
-                        <a
-                          href={`https://wa.me/${cleanWhatsapp}?text=${enquireMessage}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-3 sm:py-3.5 rounded-full bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-800 hover:text-emerald-900 font-bold text-xs sm:text-[13px] tracking-tight whitespace-nowrap transition-all shadow-2xs text-center cursor-pointer"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600 shrink-0" />
-                          <span className="whitespace-nowrap">Enquire</span>
-                        </a>
+                        {cleanWhatsapp ? (
+                          <a
+                            href={`https://wa.me/${cleanWhatsapp}?text=${enquireMessage}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-3 sm:py-3.5 rounded-full bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-800 hover:text-emerald-900 font-bold text-xs sm:text-[13px] tracking-tight whitespace-nowrap transition-all shadow-2xs text-center cursor-pointer"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600 shrink-0" />
+                            <span className="whitespace-nowrap">Enquire</span>
+                          </a>
+                        ) : (
+                          <Link
+                            href="/contact"
+                            className="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-3 sm:py-3.5 rounded-full bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-800 hover:text-emerald-900 font-bold text-xs sm:text-[13px] tracking-tight whitespace-nowrap transition-all shadow-2xs text-center cursor-pointer"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <span className="whitespace-nowrap">Enquire</span>
+                          </Link>
+                        )}
                       </div>
 
                       {/* Trust Footnote */}
@@ -352,6 +393,167 @@ export function PricingPlans({
         </div>
 
       </div>
+
+      {/* Payment QR Modal Popup */}
+      {selectedPlanForPayment && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setSelectedPlanForPayment(null)}
+        >
+          <div
+            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-emerald-900 via-slate-900 to-slate-950 text-white p-5 sm:p-6 relative">
+              <button
+                onClick={() => setSelectedPlanForPayment(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold uppercase tracking-wider mb-2.5">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Instant Payment</span>
+              </div>
+
+              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                {selectedPlanForPayment.title}
+              </h3>
+
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-emerald-300 text-sm font-extrabold">
+                  Amount Payable:
+                </span>
+                <span className="text-white text-base font-black bg-emerald-600/40 px-2.5 py-0.5 rounded-md border border-emerald-500/30">
+                  {selectedPlanForPayment.priceDisplay || '₹999'}{' '}
+                  {selectedPlanForPayment.periodDisplay || '+ GST'}
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Content Body */}
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+              
+              {hasPaymentConfig ? (
+                /* Dynamic QR Code & UPI Box */
+                <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+                  <p className="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                    <QrCode className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Scan QR Code to Pay via GPay, PhonePe, Paytm or any UPI app</span>
+                  </p>
+
+                  {qr_code_url ? (
+                    <div className="relative w-48 h-48 sm:w-56 sm:h-56 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-md">
+                      <Image
+                        src={qr_code_url}
+                        alt="Payment QR Code"
+                        fill
+                        className="object-contain p-1.5 rounded-xl"
+                        unoptimized
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-48 h-48 sm:w-56 sm:h-56 bg-slate-100 flex items-center justify-center p-4 rounded-2xl border border-dashed border-slate-300 text-slate-400 text-xs text-center font-medium">
+                      QR Code image not uploaded
+                    </div>
+                  )}
+
+                  {/* UPI ID Display below QR Code */}
+                  {upi_id && (
+                    <div className="mt-4 w-full bg-white p-3 rounded-xl border border-emerald-200/90 flex items-center justify-between gap-2 shadow-xs">
+                      <div className="text-left min-w-0 flex-1">
+                        <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                          UPI ID
+                        </div>
+                        <div className="text-xs sm:text-sm font-black text-slate-900 truncate">
+                          {upi_id}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(upi_id);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer border border-emerald-200"
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy UPI</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Payment details not configured notice */
+                <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-5 text-center space-y-2">
+                  <AlertTriangle className="w-6 h-6 text-amber-600 mx-auto" />
+                  <p className="text-xs font-bold text-amber-900">Payment details not configured</p>
+                  <p className="text-[11px] text-amber-700 leading-relaxed">
+                    Payment settings (UPI ID &amp; QR Code) have not been configured in the admin dashboard yet. Please reach out via WhatsApp for assistance.
+                  </p>
+                </div>
+              )}
+
+              {/* WhatsApp Screenshot Instructions */}
+              <div className="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4 space-y-2.5">
+                <div className="flex items-center gap-2 font-extrabold text-emerald-900 text-xs sm:text-sm">
+                  <MessageCircle className="w-4 h-4 text-emerald-600 fill-emerald-600 shrink-0" />
+                  <span>After Payment Instructions</span>
+                </div>
+
+                <p className="text-slate-700 leading-relaxed font-medium text-xs sm:text-[13px]">
+                  After payment, please send a screenshot of the payment receipt to this number for instant plan activation:
+                </p>
+
+                {formattedPhone ? (
+                  <div className="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border border-emerald-200 font-bold text-slate-900 text-xs sm:text-sm shadow-2xs">
+                    <span className="text-slate-500 font-semibold">WhatsApp Support:</span>
+                    <span className="text-emerald-700 font-black">{formattedPhone}</span>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Action Button: Open WhatsApp directly */}
+              {cleanWhatsapp ? (
+                <a
+                  href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(
+                    `Hello, I have completed the payment for ${selectedPlanForPayment.title} (${selectedPlanForPayment.priceDisplay || ''} ${selectedPlanForPayment.periodDisplay || ''}). Here is my payment screenshot.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition-all text-center cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 fill-white shrink-0" />
+                  <span>Send Screenshot on WhatsApp</span>
+                </a>
+              ) : (
+                <Link
+                  href="/contact"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 transition-all text-center cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 shrink-0" />
+                  <span>Contact Support</span>
+                </Link>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
+

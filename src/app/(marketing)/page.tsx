@@ -73,7 +73,12 @@ export default async function HomePage() {
       <TechStrip />
 
       {/* 3. Choose Your Plan (Products & Software Plans) */}
-      <PricingPlans products={projects} whatsapp={settings?.whatsapp || undefined} />
+      <PricingPlans
+        products={projects}
+        whatsapp={settings?.whatsapp ?? undefined}
+        upi_id={settings?.upi_id ?? undefined}
+        qr_code_url={settings?.qr_code_url ?? undefined}
+      />
 
       {/* 4. Our Core Solutions */}
       <TechnologyEcosystem services={services} />

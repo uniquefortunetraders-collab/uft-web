@@ -2,7 +2,17 @@
 
 import { useState, useRef, useEffect, DragEvent, ChangeEvent } from 'react';
 import Image from 'next/image';
-import { UploadCloud, X, Link as LinkIcon, Check, Loader2, Image as ImageIcon, Pencil, Trash2 } from 'lucide-react';
+import {
+  UploadCloud,
+  X,
+  Link as LinkIcon,
+  Check,
+  Loader2,
+  Image as ImageIcon,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+} from 'lucide-react';
 
 interface ImageUploadProps {
   name: string;
@@ -11,6 +21,8 @@ interface ImageUploadProps {
   helperText?: string;
   aspectRatio?: 'video' | 'square' | 'avatar';
   required?: boolean;
+  deleteFromCloudinaryOnRemove?: boolean;
+  onImageDeleted?: () => void;
 }
 
 export function ImageUpload({
@@ -20,15 +32,31 @@ export function ImageUpload({
   helperText,
   aspectRatio = 'video',
   required = false,
+  deleteFromCloudinaryOnRemove = true,
+  onImageDeleted,
 }: ImageUploadProps) {
   const [imageUrl, setImageUrl] = useState<string>(defaultValue || '');
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [customUrl, setCustomUrl] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Lock background scrolling when confirmation modal is open
+  useEffect(() => {
+    if (showDeleteModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showDeleteModal]);
 
   // Sync if defaultValue changes (e.g. when editing a different item)
   useEffect(() => {
@@ -124,12 +152,46 @@ export function ImageUpload({
     }
   };
 
-  const handleRemove = () => {
+  const clearImageState = () => {
     setImageUrl('');
     setCustomUrl('');
     setUploadError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveClick = () => {
+    if (deleteFromCloudinaryOnRemove && imageUrl) {
+      setShowDeleteModal(true);
+    } else {
+      clearImageState();
+      if (onImageDeleted) onImageDeleted();
+    }
+  };
+
+  const confirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      if (imageUrl) {
+        const res = await fetch('/api/upload', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: imageUrl }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          console.warn('Cloudinary delete warning:', data.error || data.message);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to delete image from Cloudinary:', err);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      clearImageState();
+      if (onImageDeleted) onImageDeleted();
     }
   };
 
@@ -147,7 +209,7 @@ export function ImageUpload({
       case 'avatar':
         return 'w-16 h-16 rounded-full';
       case 'square':
-        return 'w-20 h-20 rounded-lg';
+        return 'w-24 h-24 rounded-xl';
       case 'video':
       default:
         return 'w-32 sm:w-40 aspect-video rounded-lg';
@@ -232,7 +294,7 @@ export function ImageUpload({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
+                  disabled={isUploading || isDeleting}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-[#e6005c] bg-gray-100 hover:bg-pink-50 rounded-lg transition-colors cursor-pointer border border-gray-200/80"
                 >
                   <Pencil className="w-3.5 h-3.5" />
@@ -240,12 +302,12 @@ export function ImageUpload({
                 </button>
                 <button
                   type="button"
-                  onClick={handleRemove}
-                  disabled={isUploading}
+                  onClick={handleRemoveClick}
+                  disabled={isUploading || isDeleting}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100/70 rounded-lg transition-colors cursor-pointer border border-red-100"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Remove</span>
+                  <span>Delete Image</span>
                 </button>
               </div>
             </div>
@@ -267,7 +329,7 @@ export function ImageUpload({
           {isUploading ? (
             <div className="py-4 flex flex-col items-center gap-2">
               <Loader2 className="w-7 h-7 text-[#e6005c] animate-spin" />
-              <p className="text-xs font-semibold text-gray-700">Uploading image, please wait...</p>
+              <p className="text-xs font-semibold text-gray-700">Uploading image to Cloudinary...</p>
             </div>
           ) : (
             <div className="py-2 flex flex-col items-center gap-2">
@@ -308,6 +370,64 @@ export function ImageUpload({
       {helperText && !uploadError && (
         <p className="text-[11px] text-gray-400">{helperText}</p>
       )}
+
+      {/* Custom Confirmation Modal */}
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => !isDeleting && setShowDeleteModal(false)}
+        >
+          <div
+            className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 space-y-4 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-gray-900">Delete Image?</h3>
+                <p className="text-xs text-gray-500 mt-0.5">This action cannot be undone.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Are you sure you want to delete this image? {imageUrl.includes('res.cloudinary.com') ? 'It will be permanently deleted from Cloudinary storage.' : 'This will remove the uploaded image.'}
+            </p>
+
+            {/* Modal Action Buttons */}
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={confirmDelete}
+                className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Deleting from Cloudinary...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Image</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

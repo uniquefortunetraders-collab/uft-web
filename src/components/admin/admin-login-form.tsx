@@ -79,7 +79,7 @@ export function AdminLoginForm({ redirectTo = '/admin' }: AdminLoginFormProps) {
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center justify-center gap-3 mb-4 group">
               <Image
-                src="/unique-fortune-logo.png"
+                src="/uft-logo.png"
                 alt="Unique Fortune Logo"
                 width={56}
                 height={56}

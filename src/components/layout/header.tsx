@@ -109,7 +109,7 @@ export function Header({ companyName = 'UniqueAI', whatsapp }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
             <Image
-              src="/unique-fortune-logo.png"
+              src="/uft-logo.png"
               alt="Unique Fortune Logo"
               width={48}
               height={48}

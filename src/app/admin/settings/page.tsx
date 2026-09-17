@@ -152,6 +152,26 @@ export default async function AdminSettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Facebook URL</label>
+                <input
+                  type="text"
+                  name="facebook"
+                  defaultValue={social.facebook || ''}
+                  placeholder="https://facebook.com/uniquefortunetraders"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Instagram URL</label>
+                <input
+                  type="text"
+                  name="instagram"
+                  defaultValue={social.instagram || ''}
+                  placeholder="https://instagram.com/uniquefortunetraders"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+              <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">LinkedIn URL</label>
                 <input
                   type="text"

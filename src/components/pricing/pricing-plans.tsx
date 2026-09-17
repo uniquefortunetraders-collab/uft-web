@@ -85,15 +85,42 @@ export function PricingPlans({
   const [selectedPlanForPayment, setSelectedPlanForPayment] = useState<any | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Lock background scrolling when modal is open
+  // Lock background scrolling when modal is open (desktop + mobile/iOS)
   useEffect(() => {
     if (selectedPlanForPayment) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      document.body.dataset.scrollY = String(scrollY);
     } else {
+      const scrollY = document.body.dataset.scrollY;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY, 10));
+        delete document.body.dataset.scrollY;
+      }
     }
     return () => {
+      const scrollY = document.body.dataset.scrollY;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY, 10));
+        delete document.body.dataset.scrollY;
+      }
     };
   }, [selectedPlanForPayment]);
 
@@ -435,7 +462,7 @@ export function PricingPlans({
             </div>
 
             {/* Modal Content Body */}
-            <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+            <div className="p-5 sm:p-6 overflow-y-auto overscroll-contain space-y-5 flex-1">
               
               {hasPaymentConfig ? (
                 /* Dynamic QR Code & UPI Box */

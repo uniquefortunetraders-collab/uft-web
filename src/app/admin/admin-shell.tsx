@@ -113,7 +113,7 @@ export function AdminShell({
       <div className="p-5 border-b border-slate-100 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <Image
-            src="/unique-fortune-logo.png"
+            src="/uft-logo.png"
             alt="Unique Fortune Logo"
             width={36}
             height={36}

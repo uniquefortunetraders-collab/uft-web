@@ -33,11 +33,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/unique-fortune-logo.png' },
+      { url: '/uft-logo.png' },
       { url: '/favicon.ico' },
     ],
-    shortcut: '/unique-fortune-logo.png',
-    apple: '/unique-fortune-logo.png',
+    shortcut: '/uft-logo.png',
+    apple: '/uft-logo.png',
   },
 };
 

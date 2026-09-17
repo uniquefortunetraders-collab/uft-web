@@ -187,7 +187,7 @@ export function UserAuthForm({ defaultMode = 'login' }: UserAuthFormProps) {
           <div className="text-center mb-6">
             <Link href="/" className="inline-flex items-center justify-center gap-3 mb-4 group">
               <Image
-                src="/unique-fortune-logo.png"
+                src="/uft-logo.png"
                 alt="Unique Fortune Traders Logo"
                 width={56}
                 height={56}
